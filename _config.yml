@@ -47,6 +47,10 @@ social_media:
   # website: http://your_website_url
 
 topics:
+  - name: 3D Printing
+    web_url: https://en.wikipedia.org/wiki/3D_printing
+    image_url: https://cdn.shopify.com/s/files/1/0046/3781/8929/products/ender-3-pro_1_960x.jpg?v=1625023890
+    
   - name: Arduino
     web_url: https://github.com/topics/arduino
     image_url: https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/arduino/arduino.png
