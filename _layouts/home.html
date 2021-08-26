@@ -12,6 +12,12 @@
       {% include projects.html %}
     </div>
 
+    {% if site.historical %}
+      <div class="my-6">
+        {% include historical.html %}
+      </div>
+    {% endif %}
+
     {% if site.topics %}
       <div class="my-6">
         {% include interests.html %}
@@ -40,10 +46,14 @@
 
         {% include projects.html %}
 
+        {% if site.historical %}
+          {% include historical.html %}
+        {% endif %}
+
         {% if site.topics %}
           {% include interests.html %}
         {% endif %}
-
+  
         {% unless posts_total == 0 %}
           {% include thoughts.html %}
         {% endunless %}

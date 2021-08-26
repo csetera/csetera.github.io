@@ -1,0 +1,166 @@
+diff -c -r -b /Users/setera/source/ppp-314.0.2/Helpers/pppd/fsm.c /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/fsm.c
+*** /Users/setera/source/ppp-314.0.2/Helpers/pppd/fsm.c	2004-11-19 11:52:19.000000000 -0600
+--- /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/fsm.c	2009-05-22 18:54:26.000000000 -0500
+***************
+*** 113,118 ****
+--- 113,119 ----
+      f-&gt;maxnakloops = DEFMAXNAKLOOPS;
+  #ifdef __APPLE__
+      f-&gt;maxreqloops = DEFMAXREQLOOPS;
++     f-&gt;confnakrejdelay = DEFCFGNAKDELAY;
+  #endif
+      f-&gt;term_reason_len = 0;
+  }
+***************
+*** 640,645 ****
+--- 641,650 ----
+                      (*f-&gt;callbacks-&gt;finished)(f);
+              }
+              else
++             	if (f-&gt;confnakrejdelay &gt; 0) {
++ 					info("Configuration request failed, sleeping %d second", f-&gt;confnakrejdelay);
++ 					sleep(f-&gt;confnakrejdelay);
++             	}
+  #endif
+                  fsm_sconfreq(f, 0);		/* Send Configure-Request */
+          }
+diff -c -r -b /Users/setera/source/ppp-314.0.2/Helpers/pppd/fsm.h /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/fsm.h
+*** /Users/setera/source/ppp-314.0.2/Helpers/pppd/fsm.h	2004-11-19 11:52:19.000000000 -0600
+--- /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/fsm.h	2009-05-23 12:28:02.000000000 -0500
+***************
+*** 102,107 ****
+--- 102,108 ----
+  #ifdef __APPLE__
+      int reqloops;		/* Number of req loops since beginning of (re)negotiation */
+      int maxreqloops;		/* Maximum number of req loops for convergence */
++     int confnakrejdelay;	/* Seconds to delay following a config nak reject */
+      u_char recvreqid;		/* last received request id that moved us to opened state */
+      u_short recvreqhash;			/* hash of the options that moved us to opened state */
+  #endif
+***************
+*** 176,181 ****
+--- 177,183 ----
+  #define DEFMAXNAKLOOPS	5	/* Maximum number of nak loops */
+  #ifdef __APPLE__
+  #define DEFMAXREQLOOPS	15	/* Maximum number of req loops for convergence */
++ #define DEFCFGNAKDELAY	1	/* Delay in seconds after config NAK to allow the network time to settle. */
+  #endif
+  
+  /*
+diff -c -r -b /Users/setera/source/ppp-314.0.2/Helpers/pppd/ipcp.c /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/ipcp.c
+*** /Users/setera/source/ppp-314.0.2/Helpers/pppd/ipcp.c	2007-01-10 23:37:29.000000000 -0600
+--- /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/ipcp.c	2009-05-22 18:47:04.000000000 -0500
+***************
+*** 285,290 ****
+--- 285,293 ----
+  
+      { "ip-src-address-filter", o_int, &amp;ip_src_address_filter,
+        "Filter the source address (0 = off, 1 = in, 2 = out, 3 = in/out)", OPT_PRIV },
++ 
++     { "ipcp-config-reject-delay", o_int, &amp;ipcp_fsm[0].confnakrejdelay,
++         "Set delay seconds after #conf-naks for IPCP", OPT_PRIO },
+  #endif
+  
+      { NULL }
+diff -c -r -b /Users/setera/source/ppp-314.0.2/Helpers/pppd/main.c /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/main.c
+*** /Users/setera/source/ppp-314.0.2/Helpers/pppd/main.c	2009-05-11 15:44:25.000000000 -0500
+--- /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/main.c	2009-05-22 19:32:15.000000000 -0500
+***************
+*** 521,527 ****
+  	    p = "(unknown)";
+      }
+  #ifdef __APPLE__
+!     syslog(LOG_NOTICE, "pppd %s (Apple version %s) started by %s, uid %d", VERSION, PPP_VERSION,  p, uid);
+  #else
+      syslog(LOG_NOTICE, "pppd %s started by %s, uid %d", VERSION, p, uid);
+  #endif
+--- 521,527 ----
+  	    p = "(unknown)";
+      }
+  #ifdef __APPLE__
+!     syslog(LOG_NOTICE, "pppd %s (Apple version %s) started by %s, uid %d - Config Delay", VERSION, PPP_VERSION,  p, uid);
+  #else
+      syslog(LOG_NOTICE, "pppd %s started by %s, uid %d", VERSION, p, uid);
+  #endif
+diff -c -r -b /Users/setera/source/ppp-314.0.2/Helpers/pppd/patchlevel.h /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/patchlevel.h
+*** /Users/setera/source/ppp-314.0.2/Helpers/pppd/patchlevel.h	2004-02-10 13:29:27.000000000 -0600
+--- /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/patchlevel.h	2009-05-22 19:38:14.000000000 -0500
+***************
+*** 1,4 ****
+  /* $Id: patchlevel.h,v 1.5 2004/02/10 19:29:23 callie Exp $ */
+  
+! #define VERSION		"2.4.2"
+  #define DATE		"13 Jan 2004"
+--- 1,4 ----
+  /* $Id: patchlevel.h,v 1.5 2004/02/10 19:29:23 callie Exp $ */
+  
+! #define VERSION		"2.4.2.CFGDELAY"
+  #define DATE		"13 Jan 2004"
+diff -c -r -b /Users/setera/source/ppp-314.0.2/Helpers/pppd/sys-MacOSX.c /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/sys-MacOSX.c
+*** /Users/setera/source/ppp-314.0.2/Helpers/pppd/sys-MacOSX.c	2007-03-14 22:43:11.000000000 -0500
+--- /Users/setera/source/eclipse/ppp-314.0.2/ppp/Helpers/pppd/sys-MacOSX.c	2009-05-22 15:14:22.000000000 -0500
+***************
+*** 77,83 ****
+  #include
+<nssystemdirectories.h>
+ #include
+ <mach mach_time.h="">
+  #include
+  <systemconfiguration systemconfiguration.h="">
+   ! #include
+   <systemconfiguration scprivate.h="">
+    #include
+    <corefoundation cfbundle.h="">
+     #include
+     <ppp_defs.h>
+      #include
+      <ppp_domain.h>
+       --- 77,83 ----
+  #include
+       <nssystemdirectories.h>
+        #include
+        <mach mach_time.h="">
+         #include
+         <systemconfiguration systemconfiguration.h="">
+          ! /* #include
+          <systemconfiguration scprivate.h="">
+           */
+  #include
+           <corefoundation cfbundle.h="">
+            #include
+            <ppp_defs.h>
+             #include
+             <ppp_domain.h>
+              ***************
+*** 102,108 ****
+  #include
+              <bsm libbsm.h="">
+               #include "pppcontroller.h"
+! #include
+               <ppp pppcontroller_types.h="">
+                #include "../vpnd/RASSchemaDefinitions.h"
+  
+--- 102,108 ----
+  #include
+                <bsm libbsm.h="">
+                 #include "pppcontroller.h"
+! #include "../../Controller/pppcontroller_types.h"
+  
+  #include "../vpnd/RASSchemaDefinitions.h"
+                </bsm>
+               </ppp>
+              </bsm>
+             </ppp_domain.h>
+            </ppp_defs.h>
+           </corefoundation>
+          </systemconfiguration>
+         </systemconfiguration>
+        </mach>
+       </nssystemdirectories.h>
+      </ppp_domain.h>
+     </ppp_defs.h>
+    </corefoundation>
+   </systemconfiguration>
+  </systemconfiguration>
+ </mach>
+</nssystemdirectories.h>

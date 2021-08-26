@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:wfw="http://wellformedweb.org/CommentAPI/">
+ <channel>
+  <title>
+   iPhone – Et-Setera
+  </title>
+  <atom:link href="https://www.setera.org/category/mobile/iphone/feed/" rel="self" type="application/rss+xml">
+  </atom:link>
+  <link/>
+  https://www.setera.org
+  <description>
+   Ramblings of a geek
+  </description>
+  <lastbuilddate>
+   Fri, 15 Nov 2013 00:56:48 +0000
+  </lastbuilddate>
+  <language>
+   en-US
+  </language>
+  <sy:updateperiod>
+   hourly
+  </sy:updateperiod>
+  <sy:updatefrequency>
+   1
+  </sy:updatefrequency>
+  <generator>
+   https://wordpress.org/?v=4.5.24
+  </generator>
+  <item>
+   <title>
+    More iPhone Versus Java Differences
+   </title>
+   <link/>
+   https://www.setera.org/2010/08/15/more-iphone-versus-java-differences/
+   <pubdate>
+    Sun, 15 Aug 2010 18:36:59 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[iPhone]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <category>
+    <![CDATA[Uncategorized]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=264
+   </guid>
+   <description>
+    <![CDATA[In my previous entries, I&#8217;ve discussed a few things that caught me off guard while learning iPhone development.  In the last couple of weeks, I&#8217;ve picked up an Android device to dig into that platform a bit and probably will spend less time playing with iPhone development.  Before I move too far away from iPhone, [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>In my <a href="https://www.setera.org/2010/04/25/iphone-versus-exceptions/">previous</a> <a href="https://www.setera.org/2010/03/07/still-a-geek/">entries</a>, I&#8217;ve discussed a few things that caught me off  guard while learning iPhone development.  In the last couple of weeks,  I&#8217;ve picked up an Android device to dig into that platform a bit and probably will spend less time playing with iPhone development.   Before I move too far away from iPhone, I wanted to wrap up the  remaining differences I found interesting between the iPhone and Java platforms.</p>
+<p><span id="more-264"></span></p>
+<h2>Run Loop Required for Networking</h2>
+<p>One of the earliest things I needed to do was build out the networking code for my Daap player.  Initially, I was building this code as a standard Macintosh command-line application.  I happily wrote code to set up a synchronous networking call using NSURL and NSURLConnection and then&#8230; nothing.  Unlike Java, it was necessary to have a &#8220;run loop&#8221; executing.  Had I done this test initially on the iPhone emulator, I would have never run across this since the iPhone has a run loop executing the application.</p>
+<h2>Subclassing and Class Clusters</h2>
+<p>In Java, it is not possible to add functionality to another class.  The only real available option is to subclass the class of interest.  In general, that works ok until you get a class like java.lang.String that isn&#8217;t mean to be subclassed, in which case you need to provide some kind of wrapper or utility class.  My first attempt at adding some new functionality to NSMutableDictionary from the Foundation library was using a subclass.  I was greeted at runtime by an error similar to:</p>
+<p><em>2010-08-14 09:55:48.965 TestProject[1136:207] *** Terminating app due to uncaught exception &#8216;NSInvalidArgumentException&#8217;, reason: &#8216;*** -[NSDictionary objectForKey:]: method only defined for abstract class.  Define -[MyDictionarySubclass objectForKey:]!&#8217;<br />
+</em></p>
+<p>What the heck?  It turns out that most of the collection classes in iPhone are implemented as class clusters.  According to the <a href="http://developer.apple.com/mac/library/documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html">Cocoa Fundamentals Guide</a> class clusters</p>
+<p><em>&#8230; group a number of private, concrete subclasses under a  public, abstract superclass. The grouping of classes in this way  simplifies the publicly visible architecture of an object-oriented  framework without reducing its functional richness.</em></p>
+<p>Had I really needed to subclass NSMutableDictionary, <a href="http://cocoawithlove.com/2008/12/ordereddictionary-subclassing-cocoa.html">Matt Gallagher talks about how to create such a subclass</a>.  In my case, it turns out what I really needed was just an Objective-C category to add methods to NSMutableDictionary directly rather than subclassing the class.  Categories remind me of similar functionality available in Smalltalk, allowing additional methods to be attached to classes.  The class &#8220;shape&#8221; (instance variables) cannot be changed using categories, but new methods can be added which is very helpful for creating utility methods on a specific class rather than having to do it on a separate class.  Looking around the documentation for the various frameworks in the system, it is amazing to see how many classes are extended using categories.</p>
+<h2>Summary</h2>
+<p>Although my Daap player is nowhere near complete, the project did offer me plenty of visibility into Objective-C and iPhone development.  Objective-C and, in particular, the various libraries for iPhone development are incredibly powerful.  While there were a few growing pains along the way, the transition to doing iPhone development was relatively straightforward and enjoyable.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    iPhone Versus Exceptions
+   </title>
+   <link/>
+   https://www.setera.org/2010/04/25/iphone-versus-exceptions/
+   <pubdate>
+    Mon, 26 Apr 2010 00:55:15 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[iPhone]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=249
+   </guid>
+   <description>
+    <![CDATA[I&#8217;m continuing to make slow forward progress with my DAAP-based music player for the iPhone.  My most recent changes have taken this in the direction of being much more like the standard music player functionality on the iPhone.  In particular, I&#8217;ve switched over to using a tab view controller for the major perspectives of viewing [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>I&#8217;m continuing to make slow forward progress with my DAAP-based music player for the iPhone.  My most recent changes have taken this in the direction of being much more like the standard music player functionality on the iPhone.  In particular, I&#8217;ve switched over to using a tab view controller for the major perspectives of viewing the music database.</p>
+<p><span id="more-249"></span></p>
+<div id="attachment_250" style="width: 424px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2010/04/mainscreen.png"><img class="size-full wp-image-250" title="Tab Based Main View" src="https://www.setera.org/wp-content/uploads/2010/04/mainscreen.png" alt="" width="414" height="770" srcset="https://www.setera.org/wp-content/uploads/2010/04/mainscreen.png 414w, https://www.setera.org/wp-content/uploads/2010/04/mainscreen-161x300.png 161w" sizes="(max-width: 414px) 100vw, 414px" /></a><p class="wp-caption-text">Tab Based Main View</p></div>
+<p>In addition, there is now a (very) rudimentary <em>Now Playing</em> screen to control playback.</p>
+<div id="attachment_251" style="width: 424px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2010/04/nowplaying.png"><img class="size-full wp-image-251" title="Now Playing View" src="https://www.setera.org/wp-content/uploads/2010/04/nowplaying.png" alt="Now Playing View" width="414" height="770" srcset="https://www.setera.org/wp-content/uploads/2010/04/nowplaying.png 414w, https://www.setera.org/wp-content/uploads/2010/04/nowplaying-161x300.png 161w" sizes="(max-width: 414px) 100vw, 414px" /></a><p class="wp-caption-text">Now Playing View</p></div>
+<h2>iPhone Versus Exceptions</h2>
+<p>In my <a href="https://www.setera.org/2010/03/07/still-a-geek/">last entry</a>, I mentioned that I&#8217;ve struggled through some interesting differences when dealing with iPhone development when compared to my years of experience in Java.  As a long time Java developer, I&#8217;m very accustomed to the use of checked exceptions.   Most, if not all, error handling in Java is handled through the creation, throwing and catching of exceptions.  I&#8217;m accustomed to catching/handling exceptions from the underlying libraries as well as creating and  throwing my own exceptions.  It was with that background that I approached iPhone development and quickly found out that is not the recommended way of handling error conditions.  While, the standard try/catch functionality is supported in Objective-C, the documentation for Cocoa development makes it clear that using exceptions should be avoided:</p>
+<p><em><strong>Important</strong>: You should reserve the use of exceptions for programming or unexpected runtime errors such as out-of-bounds collection access, attempts to mutate immutable objects, sending an invalid message, and losing the connection to the window server. You usually take care of these sorts of errors with exceptions when an application is being created rather than at runtime.</em></p>
+<p><em>Instead of exceptions, error objects (NSError) and the Cocoa error-delivery mechanism are the recommended way to communicate expected errors in Cocoa applications. </em></p>
+<p>This is an important difference to understand when transitioning to Cocoa development from Java development.  While this is important to understand when making calls to library methods and functions, it must also be considered when defining your own calling conventions and libraries.  In order to remain consistent, it is important to use the pattern of NSError usage.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Still A Geek…
+   </title>
+   <link/>
+   https://www.setera.org/2010/03/07/still-a-geek/
+   <pubdate>
+    Mon, 08 Mar 2010 00:38:01 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[iPhone]]>
+   </category>
+   <category>
+    <![CDATA[Miscellaneous]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=228
+   </guid>
+   <description>
+    <![CDATA[Looking back to my last post way back in October it is pretty clear when things started getting crazy at work.  The team survived and managed to finish another awesome version of mFoundry&#8217;s mBanking product.  These days I&#8217;m doing more management and less coding, but I&#8217;m definitely still a geek.  Given that iPhone applications are [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Looking back to my last post<strong><em> <a href="https://www.setera.org/2009/10/17/once-a-geek/">way back in October</a> </em></strong>it is pretty clear when things started getting crazy at work.  The team survived and managed to finish another awesome version of <a href="http://www.mfoundry.com">mFoundry&#8217;s</a> <a href="http://www.mfoundry.com/mbanking_overview.html">mBanking</a> product.  These days I&#8217;m doing more management and less coding, but I&#8217;m definitely still a geek.  Given that iPhone applications are all the rage in the industry, I&#8217;ve been trying to learn my way around iPhone development.  During the process of learning, I&#8217;ve noticed a few things that have caught me off guard compared to Java.  I hope to post a few of those things in the days and weeks to come that may help other Java programmers.  In the meantime, I thought I would share some about the project I&#8217;ve been playing with to learn.</p>
+<p><span id="more-228"></span></p>
+<h3>The Project</h3>
+<p>In order to learn a new platform, I always like to have a project to build.  Looking around, I didn&#8217;t find any iPhone <a href="http://en.wikipedia.org/wiki/Digital_Audio_Access_Protocol">DAAP</a> clients for servers like the <a href="http://www.fireflymediaserver.org/">Firefly Media Server</a>.  I&#8217;ve been trying to build a DAAP client as my learning experience.  I have a good chunk of the navigation working at this point.</p>
+<div id="attachment_236" style="width: 217px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2010/03/player1.png"><img class="size-full wp-image-236" title="DAAP Player" src="https://www.setera.org/wp-content/uploads/2010/03/player1.png" alt="" width="207" height="385" /></a><p class="wp-caption-text">DAAP Player</p></div>
+<p>The <a href="http://developer.apple.com/iphone/library/documentation/DataManagement/Conceptual/iPhoneCoreData01/Introduction/Introduction.html">iPhone Core Data support</a> is amazingly powerful, providing a good chunk of the underlying data source support for table views like those in the client.</p>
+<div id="attachment_241" style="width: 217px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2010/03/player2.png"><img class="size-full wp-image-241" title="DAAP Albums" src="https://www.setera.org/wp-content/uploads/2010/03/player2.png" alt="" width="207" height="385" srcset="https://www.setera.org/wp-content/uploads/2010/03/player2.png 207w, https://www.setera.org/wp-content/uploads/2010/03/player2-161x300.png 161w" sizes="(max-width: 207px) 100vw, 207px" /></a><p class="wp-caption-text">DAAP Albums</p></div>
+<p>There is still much to be done, but the iPhone SDK has provided a large amount of functionality for a very small price.  As always, I continue to be impressed with the power packed into modern handsets.</p>
+]]>
+   </content:encoded>
+  </item>
+ </channel>
+</rss>

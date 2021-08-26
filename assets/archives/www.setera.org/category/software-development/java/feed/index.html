@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:wfw="http://wellformedweb.org/CommentAPI/">
+ <channel>
+  <title>
+   Java – Et-Setera
+  </title>
+  <atom:link href="https://www.setera.org/category/software-development/java/feed/" rel="self" type="application/rss+xml">
+  </atom:link>
+  <link/>
+  https://www.setera.org
+  <description>
+   Ramblings of a geek
+  </description>
+  <lastbuilddate>
+   Fri, 15 Nov 2013 00:56:48 +0000
+  </lastbuilddate>
+  <language>
+   en-US
+  </language>
+  <sy:updateperiod>
+   hourly
+  </sy:updateperiod>
+  <sy:updatefrequency>
+   1
+  </sy:updatefrequency>
+  <generator>
+   https://wordpress.org/?v=4.5.24
+  </generator>
+  <item>
+   <title>
+    Still Deadlocked
+   </title>
+   <link/>
+   https://www.setera.org/2012/03/11/still-deadlocked/
+   <pubdate>
+    Sun, 11 Mar 2012 21:19:16 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Clock]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=649
+   </guid>
+   <description>
+    <![CDATA[Wow&#8230; three months since my last post about my Android Clock Widget Project. While I&#8217;ve failed to bring stability to the clock selector during that time, I have figured out that the problem is not actually due to a deadlock. Instead, it appears that my project is tickling a bug in the Dalvik VM&#8217;s garbage [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Wow&#8230; three months since my <a href="https://www.setera.org/2011/12/27/deadlocked/">last post</a> about my <a href="https://www.setera.org/2011/09/04/clock-widget-project/">Android Clock Widget Project</a>.  While I&#8217;ve failed to bring stability to the clock selector during that time, I have figured out that the problem is not actually due to a deadlock.  Instead, it appears that my project is tickling a bug in the Dalvik VM&#8217;s garbage collector.  </p>
+<p><span id="more-649"></span><br />
+Depending on the device and operating system level, there are subtle changes in behavior.  In most cases, there is a crash log written to the /data/tombstones folder.  The most revealing tombstone file has come from a Samsung Captivate running a version of the <a href="http://forum.aokp.co/">AOKP ICS ROM</a>.</p>
+<pre name="code" class="shell">
+Build fingerprint: 'samsung/SGH-I897/SGH-I897:2.3.5/GINGERBREAD/UCKK4:user/release-keys'
+pid: 1758, tid: 1777  >>> com.seterasoft.mclock <<<
+signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr deadbaad
+ r0 deadbaad  r1 00000001  r2 40000000  r3 00000000
+ r4 00000000  r5 00000027  r6 50c53b40  r7 00000064
+ r8 41338018  r9 00000024  10 50c53a6c  fp 50c53ab0
+ ip ffffffff  sp 50c53a30  lr 400fdf79  pc 400fa694  cpsr 60000030
+ d0  0000000000000000  d1  0000000000000000
+ d2  0000000000000000  d3  0000000000000000
+ d4  0000000000000000  d5  0000000000000000
+ d6  0000000000000000  d7  0000000000000000
+ d8  0000000000000000  d9  0000000000000000
+ d10 0000000000000000  d11 0000000000000000
+ d12 0000000000000000  d13 0000000000000000
+ d14 0000000000000000  d15 0000000000000000
+ d16 0000000000000000  d17 0000000000000000
+ d18 0000000000000000  d19 0000000000000000
+ d20 0000000000000000  d21 0000000000000000
+ d22 0000000000000000  d23 0000000000000000
+ d24 0000000000000000  d25 0000000000000000
+ d26 0000000000000000  d27 0000000000000000
+ d28 0100010001000100  d29 0100010001000100
+ d30 0000000000000000  d31 3ff0000000000000
+ scr 2800001b
+
+         #00  pc 00017694  /system/lib/libc.so
+         #01  pc 00007bb0  /system/lib/libcutils.so (mspace_merge_objects)
+         #02  pc 0007b6c8  /system/lib/libdvm.so (_Z21dvmHeapSourceFreeListjPPv)
+         #03  pc 00042ce0  /system/lib/libdvm.so
+         #04  pc 00032f94  /system/lib/libdvm.so (_Z22dvmHeapBitmapSweepWalkPK10HeapBitmapS1_jjPFvjPPvS2_ES2_)
+         #05  pc 00042c9c  /system/lib/libdvm.so (_Z27dvmHeapSweepUnmarkedObjectsbbPjS_)
+         #06  pc 000337c0  /system/lib/libdvm.so (_Z25dvmCollectGarbageInternalPK6GcSpec)
+         #07  pc 0005ff6c  /system/lib/libdvm.so (_Z17dvmCollectGarbagev)
+         #08  pc 00072a8e  /system/lib/libdvm.so
+         #09  pc 00030a8c  /system/lib/libdvm.so
+         #10  pc 00034248  /system/lib/libdvm.so (_Z12dvmInterpretP6ThreadPK6MethodP6JValue)
+         #11  pc 0006c692  /system/lib/libdvm.so (_Z14dvmCallMethodVP6ThreadPK6MethodP6ObjectbP6JValueSt9__va_list)
+         #12  pc 0006c6b4  /system/lib/libdvm.so (_Z13dvmCallMethodP6ThreadPK6MethodP6ObjectP6JValuez)
+         #13  pc 0005f7c0  /system/lib/libdvm.so
+         #14  pc 00012c14  /system/lib/libc.so (__thread_entry)
+         #15  pc 00012744  /system/lib/libc.so (pthread_create)
+</pre>
+<p>The failing function appears to be implemented in dlmalloc.c in the Android source, but I really don't have any good idea about what might be causing the crash.  I also don't appear to be the only one, as there are <a href="http://groups.google.com/a/googleproductforums.com/forum/#!category-topic/maps/google-maps-for-mobile/XVVmMYYxLUI">other references on the web</a> that look similar.</p>
+<p>To this point, I've tried a variety of things to try to track down the problem.  I've gone so far as to try to build my own version of the <a href="http://www.cyanogenmod.com/">Cyanogenmod</a> with the idea that I might be able to add more logging output.  So far, I've not had any luck with this approach.  I generally have no problem walking away from hobby projects when I lose interest.  However, this has turned into a competition of me versus the computer and I'm not quite ready to give up.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Inertia
+   </title>
+   <link/>
+   https://www.setera.org/2011/07/30/inertia/
+   <comments>
+    https://www.setera.org/2011/07/30/inertia/#comments
+   </comments>
+   <pubdate>
+    Sun, 31 Jul 2011 00:23:30 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[AndEngine]]>
+   </category>
+   <category>
+    <![CDATA[AndPingus]]>
+   </category>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=541
+   </guid>
+   <description>
+    <![CDATA[Inertia is the resistance of any physical object to a change in its state of motion or rest, or the tendency of an object to resist any change in its motion. For me, this also describes my tendencies toward side projects like my Pingus project. When I last worked on Pingus a couple of months [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<blockquote><p>Inertia is the resistance of any physical object to a change in its state of motion or rest, or the tendency of an object to resist any change in its motion.</p></blockquote>
+<p>For me, this also describes my tendencies toward side projects like my <a href="https://www.setera.org/2011/06/26/we-are-experiencing-technical-difficulties/">Pingus project</a>.  When I last worked on Pingus a couple of months ago, I updated the underlying <a href="http://andengine.org">AndEngine</a> libraries and found a ton of breaking changes.  I put Pingus on the shelf until I had more time to look at the breakage and how to solve it.  The AndEngine changes are pretty significant and I&#8217;m going to need to rethink portions of Pingus in order to get things running correctly again.  </p>
+<p><span id="more-541"></span></p>
+<p>Now my personal inertia is kicking in and causing me to put off this rework for a while.  To me, this is the biggest difference between work and hobby projects&#8230; I don&#8217;t <b>have</b> to work on hobby projects if I don&#8217;t want to.  Thus, Pingus is &#8220;on a break&#8221; for a while until I find the energy to bring it up to date relative to the underlying game engine. </p>
+<p>In the meantime, I decided I wanted to spend a bit of time taking a look at Android&#8217;s <a href="http://developer.android.com/guide/topics/appwidgets/index.html">App Widget</a> support.  Until I started digging into the documentation and examples, I had always assumed that a widget was provided a Canvas to draw directly on to the home screen.  To me this seemed like it would have been the easiest way for developers to develop widgets.  </p>
+<p>It turns out that Android AppWidgets don&#8217;t work that way at all.  AppWidgets are built on top of <a href="http://developer.android.com/reference/android/widget/RemoteViews.html">Remote Views</a>.  According to the Android documentation, Remote Views are</p>
+<blockquote><p>A class that describes a view hierarchy that can be displayed in another process. The hierarchy is inflated from a layout resource file, and this class provides some basic operations for modifying the content of the inflated hierarchy.</p></blockquote>
+<p>A Remote View is created in one process and passed into the process that owns the Android home screen.  It is actually a <a href="http://developer.android.com/reference/android/os/Parcelable.html">Parcelable</a> object, however due to class loading issues, there is only a very small number of Views and Widgets that are allowed to be passed across the process boundary.  For anything that involves relatively complex graphical rendering, the only real way to drive the widget&#8217;s contents is by specifying a very simple widget layout:</p>
+<pre name="code" class="xml">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+    <ImageView
+    	android:id="@+id/imageview"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+		android:src="@drawable/icon" />
+	    
+</LinearLayout>
+</pre>
+<p>and then sending bitmaps to the image view:</p>
+<pre name="code" class="java">
+	private void updateWidget(Context context, AppWidgetManager appWidgetManager) {
+		Bitmap bitmap = Bitmap.createBitmap(100, 100, Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		
+		this.drawable.draw(canvas);
+
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main);
+		views.setImageViewBitmap(R.id.imageview, bitmap);
+
+		ComponentName componentName = new ComponentName(context, MyAppWidgetProvider.class);
+		appWidgetManager.updateAppWidget(componentName, views);
+	}
+</pre>
+<p>While this seems like a high overhead way to handle updates to the widget contents, I have to assume that the Android developers had a good reason for doing things like this.  I can only hope that there are some tricks being done in the Android implementation that lower the cost of this operation.  Given that I&#8217;ve just managed to get this to work at all, I imagine there are is a lot of room for improvement in my use of this API.  However, I found it confusing enough to figure out how to do and thought others might benefit from my pain.</p>
+]]>
+   </content:encoded>
+   <wfw:commentrss>
+    https://www.setera.org/2011/07/30/inertia/feed/
+   </wfw:commentrss>
+   <slash:comments>
+    2
+   </slash:comments>
+  </item>
+  <item>
+   <title>
+    Supporting Extra Large Screens in Android
+   </title>
+   <link/>
+   https://www.setera.org/2011/05/11/supporting-extra-large-screens-in-android/
+   <pubdate>
+    Thu, 12 May 2011 00:00:20 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[AndEngine]]>
+   </category>
+   <category>
+    <![CDATA[AndPingus]]>
+   </category>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=500
+   </guid>
+   <description>
+    <![CDATA[In my last Android Pingus post I mentioned that I was interested in getting Pingus running full screen on my Motorola Xoom. It was clear from Android Market applications that it was possible to run applications across a wide range of Android versions with full screen support for extra large screens, but it was not [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>In my last <a href="https://www.setera.org/2011/05/07/pingus-on-android-%E2%80%93-%E2%80%9Cdestroyable-terrain%E2%80%9D-3/">Android Pingus post</a> I mentioned that I was interested in getting Pingus running full screen on my Motorola Xoom.  It was clear from Android Market applications that it was possible to run applications across a wide range of Android versions with full screen support for extra large screens, but it was not entirely obvious to me how to actually accomplish that.</p>
+<p>In reading the <a href="http://developer.android.com/guide/topics/manifest/supports-screens-element.html">Android <b>supports-screen</b> documentation</a>, it is clear that it is necessary to set the <b>xlargeScreens</b> attribute to <b>true</b>.  However, the <b>xlargeScreens</b> attribute is not supported below API level 9.  Trying to shoehorn that attribute into my project that was attempting to support back to API level 5, resulted in the following error.<br />
+<span id="more-500"></span></p>
+<div id="attachment_504" style="width: 938px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2011/05/xlargescreensfail.png"><img src="https://www.setera.org/wp-content/uploads/2011/05/xlargescreensfail.png" alt="" title="XLargeScreens Fail" width="928" height="415" class="size-full wp-image-504" srcset="https://www.setera.org/wp-content/uploads/2011/05/xlargescreensfail.png 928w, https://www.setera.org/wp-content/uploads/2011/05/xlargescreensfail-300x134.png 300w" sizes="(max-width: 928px) 100vw, 928px" /></a><p class="wp-caption-text">XLargeScreens Attribute Failure</p></div>
+<p>With a bit of finagling, I was able to get things working.  In order to allow the <b>xlargeScreens</b> attribute, it is necessary to specify a target SDK version of at least 9.</p>
+<div id="attachment_507" style="width: 729px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2011/05/xlargescreensworking.png"><img src="https://www.setera.org/wp-content/uploads/2011/05/xlargescreensworking.png" alt="" title="XLargeScreens Working" width="719" height="462" class="size-full wp-image-507" srcset="https://www.setera.org/wp-content/uploads/2011/05/xlargescreensworking.png 719w, https://www.setera.org/wp-content/uploads/2011/05/xlargescreensworking-300x192.png 300w" sizes="(max-width: 719px) 100vw, 719px" /></a><p class="wp-caption-text">XLargeScreens Working</p></div>
+<p>This screenshot shows how the minimum SDK version can be set below version 9 and the target version is set to 9, allowing the <b>xlargeScreens</b> attribute to be specified.  In addition, it is necessary to change the Android version level in the project properties.</p>
+<div id="attachment_509" style="width: 638px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2011/05/xlargescreensprops.png"><img src="https://www.setera.org/wp-content/uploads/2011/05/xlargescreensprops.png" alt="" title="XLargeScreens Properties" width="628" height="518" class="size-full wp-image-509" srcset="https://www.setera.org/wp-content/uploads/2011/05/xlargescreensprops.png 628w, https://www.setera.org/wp-content/uploads/2011/05/xlargescreensprops-300x247.png 300w" sizes="(max-width: 628px) 100vw, 628px" /></a><p class="wp-caption-text">XLargeScreens Properties</p></div>
+<p>With the project properties set to use API level 9 there does not appear to be any automated way to restrict access to API that was older than version 9.  Because of this, I do worry about choosing Android API&#8217;s that will not work at the <i>minimum</i> SDK and will fail on-device.  My plan at this point is to switch back to building primarily for low end and switch once in a while to try on my Xoom.  If I were a bit more serious, I would probably handle this automatically as part of a build script.</p>
+<p>I do wish that Google had handled things differently in regard to how this works.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Pingus on Android – “Destroyable Terrain” #2
+   </title>
+   <link/>
+   https://www.setera.org/2011/03/27/pingus-on-android-%e2%80%93-%e2%80%9cdestroyable-terrain%e2%80%9d-2/
+   <pubdate>
+    Sun, 27 Mar 2011 21:32:08 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[AndEngine]]>
+   </category>
+   <category>
+    <![CDATA[AndPingus]]>
+   </category>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=431
+   </guid>
+   <description>
+    <![CDATA[When we last met I had begun working on the ability for the Pingus character to destroy the terrain. At that point, I had managed to get the images updated for the sprites that made up the image, but since those images were shared all of the sprites that shared the image were being affected. [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>When we <a href="../../../../2011/03/05/pingus-on-android-destroyable-terrain-1">last met</a> I had begun working on the ability for the Pingus character to destroy the terrain.  At that point, I had managed to get the images updated for the sprites that made up the image, but since those images were shared all of the sprites that shared the image were being affected.<br />
+<span id="more-431"></span></p>
+<p>I added support to separate the sprite images when a sprite needed to be altered, but it took me a while to realize I was forgetting to set the correct position for the newly created sprite.  This resulted in this confusing result.</p>
+<p><object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/cQTSG325xMo?hl=en&#038;fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/cQTSG325xMo?hl=en&#038;fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></p>
+<p>Once I realized that the issue was due to incorrect image/sprite generation, I had a much better result.</p>
+<p><object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/B_IeC-LCdDo?hl=en&#038;fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/B_IeC-LCdDo?hl=en&#038;fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></p>
+<p>It became clear very quickly that my current approach for ground sprites was not going to work very well.  Using the same images scaled and rotated in various ways makes it very difficult to find the correct sprite and, as you can see from the red X&#8217;s, it also means that many sprite images may need to be altered in the course of digging out a particular chunk of terrain.</p>
+<h2>Ground Tiles</h2>
+<p>To improve this such that the sprites would be more aligned and easier to deal with, I&#8217;m switching to using pre-generated ground tiles.  The tooling that currently generates the collision map has been extended to generate a set of square ground tiles.  Starting with an image that contains all of the ground sprites:</p>
+<div id="attachment_436" style="width: 310px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2011/03/ground1.png"><img src="https://www.setera.org/wp-content/uploads/2011/03/ground1-300x150.png" alt="" title="Full Ground Image" width="300" height="150" class="size-medium wp-image-436" srcset="https://www.setera.org/wp-content/uploads/2011/03/ground1-300x150.png 300w, https://www.setera.org/wp-content/uploads/2011/03/ground1-1024x512.png 1024w, https://www.setera.org/wp-content/uploads/2011/03/ground1.png 1400w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">Full Ground Image</p></div>
+<p>This image can be cropped down to include only the non-transparent area:</p>
+<div id="attachment_437" style="width: 310px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2011/03/ground2.png"><img src="https://www.setera.org/wp-content/uploads/2011/03/ground2-300x118.png" alt="" title="Cropped Ground Image" width="300" height="118" class="size-medium wp-image-437" srcset="https://www.setera.org/wp-content/uploads/2011/03/ground2-300x118.png 300w, https://www.setera.org/wp-content/uploads/2011/03/ground2-1024x403.png 1024w, https://www.setera.org/wp-content/uploads/2011/03/ground2.png 1116w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">Cropped Ground Image</p></div>
+<p>Finally, it is broken down into individual tiles:</p>
+<div id="attachment_438" style="width: 310px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2011/03/ground3.png"><img src="https://www.setera.org/wp-content/uploads/2011/03/ground3-300x118.png" alt="" title="Ground Tiles" width="300" height="118" class="size-medium wp-image-438" srcset="https://www.setera.org/wp-content/uploads/2011/03/ground3-300x118.png 300w, https://www.setera.org/wp-content/uploads/2011/03/ground3-1024x403.png 1024w, https://www.setera.org/wp-content/uploads/2011/03/ground3.png 1116w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">Ground Tiles</p></div>
+<p>Each non-transparent tile is stored individually.  A new ground tile map object tracks the images and transparent tiles.  At the moment, the tiles are being generated as 128&#215;128 pixel images, which plays well with the OpenGL requirement that textures must be sized as a power of 2.  Dependent on the maximum texture size, multiple ground tiles may be laid out within the texture with a minimum wasted space.  The trick will be to pick an appropriate size to balance the various costs involved in loading and manipulating the sprite textures when destruction occurs.</p>
+<p>While I had hoped to actually show this work via video in this post, I&#8217;ve run up against a bit of a roadblock.  While fixing one problem, I&#8217;ve introduced another issue that I can&#8217;t seem to resolve.  At this point it is better for me to walk away from this project for a few days and come back with a fresh set of eyes.  With any hope, my next entry will show a final working destroyable terrain implementation.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Pingus on Android – “Destroyable Terrain” #1
+   </title>
+   <link/>
+   https://www.setera.org/2011/03/05/pingus-on-android-destroyable-terrain-1/
+   <pubdate>
+    Sun, 06 Mar 2011 00:58:10 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[AndEngine]]>
+   </category>
+   <category>
+    <![CDATA[AndPingus]]>
+   </category>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=409
+   </guid>
+   <description>
+    <![CDATA[They say that slow and steady wins the race. In the case of this project, the only thing I have going for me is the slow part. Nicolas Gramlich, author of the AndEngine library on which this is based, referred to this part of the project as &#8220;destroyable terrain&#8221;. I really like that phrase, so [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>They say that slow and steady wins the race.  In the case of this project, the only thing I have going for me is the slow part.  Nicolas Gramlich, author of the <a href="http://www.andengine.org/">AndEngine library</a> on which this is based, referred to this part of the project as &#8220;destroyable terrain&#8221;.  I really like that phrase, so I think I will continue to use it here.</p>
+<p>In <a href="https://www.setera.org/2011/02/19/pingus-on-android-early-digger-support/">Early Digger Support</a> I covered the initial digger support.  At that point I had managed to update the <a href="https://www.setera.org/2011/01/16/pingus-on-android-more-collision-detection/">in-memory collision map</a>, but updating the actual textures driving AndEngine was proving to be a bit more difficult.  I&#8217;m still not there, but I think I&#8217;m moving in a positive direction.  The following video shows the current state of things.  The textures are being updated with a full red fill to make it clear that they have been hit.</p>
+<p><object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/-8GmL4jHq_I?hl=en&#038;fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/-8GmL4jHq_I?hl=en&#038;fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></p>
+<p>So, why is everything turning red?   Well, that turns out to be the next item that will need to be dealt with&#8230; shared textures.  To save memory, many of the sprites share common textures and texture regions.  Thus, in the current implementation, changing the underlying texture information affects all sprites that share that information.  This is something I knew would have to be dealt with eventually, so it appears that eventually is <em>now</em>.</p>
+<p><span id="more-409"></span></p>
+<h2>Quad Trees</h2>
+<p>When I initially started playing with altering the texture data, I was worried about performance.  My first attempt to locate the sprites to be altered used the standard AndEngine functionality to query collisions using the &#8220;collidesWith&#8221; method for shapes.  This proved to be really expensive for gross-level collision detection.  My performance tests using the built in Android tools for capturing trace data showed that much of the cost of the terrain destruction was accountable to simply finding the sprite to be altered.</p>
+<p>I had heard previously about the use of <a href="http://en.wikipedia.org/wiki/Octree">Octrees</a> in 3D to help do quick searches on the boundaries of objects.  In the 2D world, <a href="http://en.wikipedia.org/wiki/Quadtree">Quadtrees</a> are used instead.  I was surprised not to find an actual Quadtree implementation on the web, but was able to piece together a nice generic implementation based on lots of research.  With the Quadtree, I was able to get closer to reasonable performance, as you can see in the video capture.  My hope is that using a Quadtree and doing the necessary cloning to split sprite textures will lead to a reasonably performant destroyable terrain implementation, but that is still yet to be seen.</p>
+<h2>Java Generics Aside</h2>
+<p>My Quadtree implementation initially was built to accept a single object type.  It seemed more useful to use Java Generics to make the Quadtree more generally useful.  I was hung up by one thing though.  I wanted to be able to allow the Quadtree to accept objects with a certain interface declaration.  Basically, I wanted this:</p>
+<pre name="code" class="java">
+public class Quadtree&lt;T implements IBoundedObject&gt; {
+</pre>
+<p>Where IBoundedObject is simply defined as:</p>
+<pre name="code" class="java">
+public interface IBoundedObject {
+	Rect getBounds();
+}
+</pre>
+<p>However, the <em><code>implements</code></em> extension is not supported by the generics syntax.  This had me confused for a while until I realized that it is possible to do what I wanted to do, but needed to specify <em><code>extends</code></em>:</p>
+<pre name="code" class="java">
+public class Quadtree&lt;T extends IBoundedObject&gt; {
+</pre>
+<p>I&#8217;m sure there is some perfectly good technical reason for doing things this way, but personally I find the lack of consistency confusing and unnecessary.</p>
+<h2>Next Time</h2>
+<p>With any luck, I will be able to show a reasonably performant implementation of destroyable terrain by pulling the various pieces together.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Pingus on Android – Early Digger Support
+   </title>
+   <link/>
+   https://www.setera.org/2011/02/19/pingus-on-android-early-digger-support/
+   <pubdate>
+    Sat, 19 Feb 2011 20:28:42 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[AndEngine]]>
+   </category>
+   <category>
+    <![CDATA[AndPingus]]>
+   </category>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=401
+   </guid>
+   <description>
+    <![CDATA[Work and life have conspired to keep me from making a lot of progress on my Android on Pingus project. I had hoped to get further before posting here again, but instead decided to go ahead and post a minor update. In my last post I covered my early collision detection implementation. The next step [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Work and life have conspired to keep me from making a lot of progress on my Android on Pingus project.  I had hoped to get further before posting here again, but instead decided to go ahead and post a minor update.  In my <a href="https://www.setera.org/2011/01/16/pingus-on-android-more-collision-detection/">last post</a> I covered my early collision detection implementation.</p>
+<p>The next step was to start implementing some behaviors for the Pingus.  The <em>digger</em> behavior seemed a good place to start.  In order to implement the digger, it is necessary to actually alter the collision map generated by the tool.  In the end, this part was pretty easy to handle.  The results are captured in the video capture.</p>
+<p><object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/JXHjl-FJ5us?hl=en&#038;fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/JXHjl-FJ5us?hl=en&#038;fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></p>
+<p>While it was relatively easy to carve out a path through the in-memory collision map, updating the actual graphics is proving to be much more difficult.  AndEngine implements 2D graphics using 3D/OpenGL.  This implies that in order to update the graphics, the underlying texture images need to be updated.  I&#8217;m in the process of building AndEngine support for altering the underlying texture images.  At the moment, this appears to be slow and may need to be abandoned.  Just like while I worked on the collision map, the lack of guarantee for clipping and Z buffer on Android devices further complicate the situation.</p>
+<p>While there are times that I wonder if using AndEngine for this project is makes it more difficult, I&#8217;m not quite ready to give it up.  More to come&#8230;</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Pingus on Android – More Collision Detection
+   </title>
+   <link/>
+   https://www.setera.org/2011/01/16/pingus-on-android-more-collision-detection/
+   <comments>
+    https://www.setera.org/2011/01/16/pingus-on-android-more-collision-detection/#comments
+   </comments>
+   <pubdate>
+    Sun, 16 Jan 2011 14:55:19 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[AndEngine]]>
+   </category>
+   <category>
+    <![CDATA[AndPingus]]>
+   </category>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=342
+   </guid>
+   <description>
+    <![CDATA[It is a good thing that I&#8217;m not trying to make my living with this little project, given the slow forward progress. However, there is continued progress on the collision detection compared to my last update Pingus On Android – Early Collision Detection. As you can see from this video, things are still a bit [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>It is a good thing that I&#8217;m not trying to make my living with this little project, given the slow forward progress.  However, there is continued progress on the collision detection compared to my last update <a href="https://www.setera.org/2011/01/01/pingus-on-android-early-collision-detection/">Pingus On Android – Early Collision Detection</a>.</p>
+<p><object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/dlEt6vNsc3A?hl=en&#038;fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/dlEt6vNsc3A?hl=en&#038;fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></p>
+<p><span id="more-342"></span></p>
+<p>As you can see from this video, things are still a bit twitchy, but at least Pingus is able to step up and down.  To get to this point, I considered a couple of options for improving the collision detection in the system.</p>
+<ul>
+<li>Use the OpenGL stencil buffer<br />While this might be an interesting approach, the stencil buffer is not guaranteed to be available on all devices.</li>
+<li>glReadPixels at collision point<br />Using glReadPixels &#8220;around&#8221; the point of a potential collision might be possible, but appeared to be a fairly expensive operation.  In addition, it would be difficult to determine whether a pixel was &#8220;ground or &#8220;solid&#8221;.</li>
+<li>glReadPixels to build a full collision map during startup<br />This approach would be an improvement over continually using glReadPixels, by caching the results, but suffers from many of the same problems.  In addition, the cached image would be large if 4-byte pixels were used.</li>
+</ul>
+<h2>Pre-generated Collision Map</h2>
+<p>In the end, I decided that the best approach was to use an external tool to generate a collision map.  Unlike many other games, the Pingus world is fairly static, allowing the pre-generation of the map.  It is clear that some future aspects of the gameplay will require more dynamic collision detection, but pre-generating this much of the collision map offered a lot of positives:</p>
+<ul>
+<li>Allowed the hard work of calculating the collision map to be moved outside of the constrained mobile environment.</li>
+<li>Allowed the collision map output and associated object wrapper to be tested outside of the constrained mobile environment.</li>
+<li>Allowed the collision map data to be heavily processed to provide the smallest usable map.</li>
+</ul>
+<h3>Initial Map Image</h3>
+<p>The first step in the generation of the collision map is to create an image representing the world objects.  This initial image is generated using the Java image API&#8217;s in the RGB colorspace using the full color sprite images.  Between the bit-depth and the excess transparent space in the image, this image is much larger than needed for the collision map.  The following image (scaled down), demonstrates the wasted space.</p>
+<p style="text-align: center;"><a href="https://www.setera.org/wp-content/uploads/2011/01/rgb-full-cmap.png"><img class="aligncenter size-full wp-image-343" title="Full Level RGB Collision Map" src="https://www.setera.org/wp-content/uploads/2011/01/rgb-full-cmap.png" alt="" width="490" height="245" srcset="https://www.setera.org/wp-content/uploads/2011/01/rgb-full-cmap.png 700w, https://www.setera.org/wp-content/uploads/2011/01/rgb-full-cmap-300x150.png 300w" sizes="(max-width: 490px) 100vw, 490px" /></a></p>
+<h3>Indexed Image</h3>
+<p>In an attempt to reduce the size of the individual pixels, the image was converted to a indexed color model.  However, the Java image API&#8217;s will always attempt to match the closest color, yielding a collision map that looks like the following.  Just not quite what we need.</p>
+<p><a href="https://www.setera.org/wp-content/uploads/2011/01/indexed1-full-cmap.png"><img class="aligncenter size-full wp-image-346" title="First Indexed Image Collision Map" src="https://www.setera.org/wp-content/uploads/2011/01/indexed1-full-cmap.png" alt="" width="560" height="280" srcset="https://www.setera.org/wp-content/uploads/2011/01/indexed1-full-cmap.png 700w, https://www.setera.org/wp-content/uploads/2011/01/indexed1-full-cmap-300x150.png 300w" sizes="(max-width: 560px) 100vw, 560px" /></a></p>
+<h3>Indexed Image Corrected</h3>
+<p>Instead of drawing the sprite images directly into the indexed collision map, it is necessary to first convert the sprite images, marking opaque versus transparent images before drawing the collision map.  In the following image, the colors have been mapped to mean:</p>
+<ul>
+<li>cyan &#8211; Transparent</li>
+<li>blue &#8211; Liquid</li>
+<li>green &#8211; Ground</li>
+<li>red &#8211; Solid (not shown)</li>
+</ul>
+<p>The original PNG that this scaled version originated from is 1400&#215;700 pixels and is 3.5K on disk (with compression, etc).  Uncompressed, it is a fairly large image to deal with in memory.</p>
+<p><a href="https://www.setera.org/wp-content/uploads/2011/01/indexed2-full-cmap.png"><img src="https://www.setera.org/wp-content/uploads/2011/01/indexed2-full-cmap.png" alt="" title="Full size indexed collision map" width="700" height="350" class="aligncenter size-full wp-image-349" srcset="https://www.setera.org/wp-content/uploads/2011/01/indexed2-full-cmap.png 700w, https://www.setera.org/wp-content/uploads/2011/01/indexed2-full-cmap-300x150.png 300w" sizes="(max-width: 700px) 100vw, 700px" /></a></p>
+<p>It turns out that dealing with alpha values in the Java image library is somewhat tricky.  The way alpha is dealt with depends on the underlying color model that is being used.  To avoid having to always check during the conversion of the RGB sprite images into the opaque/transparent image, the following class helped.</p>
+<pre name="code" class="java">
+	class ColorMapTransparencyHelper {
+		private ColorModel colorModel;
+		private boolean hasTranparentPixel;
+		private int transparentPixelRGB;
+		
+		ColorMapTransparencyHelper(ColorModel colorModel) {
+			this.colorModel = colorModel;
+			
+			if (colorModel instanceof IndexColorModel) {
+				IndexColorModel indexColorModel = (IndexColorModel) colorModel;
+				
+				int transparentPixel = indexColorModel.getTransparentPixel();
+				if (transparentPixel != -1) {
+					hasTranparentPixel = true;
+					transparentPixelRGB = indexColorModel.getRGB(transparentPixel);
+				}
+			}
+		}
+		
+		boolean hasAlpha(int rgb) {
+			return hasTranparentPixel ? 
+				(rgb == transparentPixelRGB) : 
+				(colorModel.getAlpha(rgb) != 0);
+		}
+	}
+</pre>
+<h3>Crop and Corrected Indexed Image</h3>
+<p>The final step was to eliminate as much transparency as possible.  The following cropped image is the final image result.  The PNG image in this case is 1400&#215;440 pixels and compressed to 3.1K.</p>
+<p><a href="https://www.setera.org/wp-content/uploads/2011/01/indexed2-crop-cmap.png"><img src="https://www.setera.org/wp-content/uploads/2011/01/indexed2-crop-cmap.png" alt="" title="Cropped Collision Map" width="700" height="220" class="aligncenter size-full wp-image-356" srcset="https://www.setera.org/wp-content/uploads/2011/01/indexed2-crop-cmap.png 700w, https://www.setera.org/wp-content/uploads/2011/01/indexed2-crop-cmap-300x94.png 300w" sizes="(max-width: 700px) 100vw, 700px" /></a></p>
+<h2>Moving Beyond the Image</h2>
+<p>Originally, I had thought I would use a packaged PNG image as the basis for the collision map on the device.  While this might have worked out, the biggest problem was that the Android graphics API does not make it easy to get the <strong><em>index</em></strong> of the pixel rather than the RGB value.  The multiple conversions required to deal with the image as a collision map ended up being more heavyweight than it seemed worthwhile.  Thus, the final step the tool takes is to convert the PNG image into an array of bytes representing the states of the pixels.  These bytes are written to the package and read by the device as the collision map.  </p>
+<p>The model class that wraps this data is aware of the transparent regions that are not part of the collision map values and those are automatically taken care of by the model class.  This yields a very simple API for callers:</p>
+<pre name="code" class="java">
+public class CollisionMap {
+	public static byte PIXEL_TRANSPARENT = 0;
+	public static byte PIXEL_SOLID = 1;
+	public static byte PIXEL_GROUND = 2;
+	public static byte PIXEL_WATER = 3;
+
+	/**
+	 * Get the collision value at the specified location.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public byte getCollisionValue(int x, int y);
+
+	/**
+	 * Get an array of bytes representing the map values for the specified
+	 * column.
+	 * 
+	 * @param x_start
+	 * @param y
+	 * @param width
+	 * @return
+	 */
+	public byte[] getHorizontalCollisionEdge(int x_start, int y, int width);
+
+	/**
+	 * Get an array of bytes representing the map values for the specified row.
+	 * 
+	 * @param x
+	 * @param y_start
+	 * @param height
+	 * @return
+	 */
+	public byte[] getVerticalCollisionEdge(int x, int y_start, int height);
+
+	/**
+	 * Set the specified collision map value.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param value
+	 */
+	public void setCollisionValue(int x, int y, byte value);
+}
+</pre>
+<p>With the collision map in place, it is then possible to query for information about the world around the Pingus.  This information will be further useful in implementing things like the visual world map and determining whether a Pingus can dig at a particular location.  </p>
+<p>To be continued&#8230;</p>
+]]>
+   </content:encoded>
+   <wfw:commentrss>
+    https://www.setera.org/2011/01/16/pingus-on-android-more-collision-detection/feed/
+   </wfw:commentrss>
+   <slash:comments>
+    2
+   </slash:comments>
+  </item>
+  <item>
+   <title>
+    Pingus on Android
+   </title>
+   <link/>
+   https://www.setera.org/2010/11/21/pingus-on-android/
+   <comments>
+    https://www.setera.org/2010/11/21/pingus-on-android/#comments
+   </comments>
+   <pubdate>
+    Mon, 22 Nov 2010 01:56:18 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=272
+   </guid>
+   <description>
+    <![CDATA[As I&#8217;ve continued hiring at mFoundry (if you live in the Bay Area, check us out), I&#8217;ve been very busy non-coding.  As usual, that implies the need for a non-work programming project.  As I mentioned in my last post, I&#8217;ve started digging into Android programming.  I decided it would be interesting to try to do [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>As I&#8217;ve continued hiring at <a href="http://mfoundry.com/index.html" target="_blank">mFoundry</a> (if you live in the Bay Area, <a href="http://mfoundry.com/company/careers.html" target="_blank">check us out</a>), I&#8217;ve been very busy non-coding.  As usual, that implies the need for a non-work programming project.  As I mentioned <a href="https://www.setera.org/2010/08/15/more-iphone-versus-java-differences/" target="_blank">in my last post</a>, I&#8217;ve started digging into Android programming.  I decided it would be interesting to try to do a game of some sort.  Given that I have zero skill with graphics, I had to cheat a bit.  I&#8217;m attempting to build an Android version of the <a href="http://pingus.seul.org/" target="_blank">Pingus</a> game using the graphics and levels from their source code and the very cool Android game engine <a href="http://www.andengine.org/" target="_blank">AndEngine</a>.<br />
+<span id="more-272"></span><br />
+The most straightforward approach to bringing Pingus to Android would probably be to do a native C port using the <a href="http://developer.android.com/sdk/ndk/index.html" target="_blank">Android NDK</a>, however I&#8217;m more interested in trying to build out the game logic.  I don&#8217;t foresee myself being nearly as good about documenting the process as <a href="http://www.shamusyoung.com/twentysidedtale/" target="_blank">Shamus Young at Twenty Sided</a>, but to prove I&#8217;m still alive and coding it seemed a good time to post <em>something.</em></p>
+<h2>AndEngine</h2>
+<p>AndEngine is an excellent open-source library for building 2D games using Android&#8217;s OpenGL ES support for improved function and performance.   AndEngine has an excellent set of examples that can be installed directly from the Android Market.  The examples do a decent job of showing how to use the library.  I&#8217;m slowly finding my way around the library, however real documentation would be very helpful in truly understanding the library.  With that said, I can&#8217;t complain too much about an excellent library that is completely free.</p>
+<h2>Parsing Resource Definitions</h2>
+<p>I had originally planned to package the Pingus level and resource definitions into the package, reading them at runtime.  The Pingus level and resource definition files are defined using a subset of Lisp S-Expressions.  While running under the emulator, it became clear that reading these files at runtime was going to be too expensive.  After a couple of iterations, the resource definitions are currently read by a separate tool into a set of representative model objects.  Those objects are then serialized into SQLite database packaged into the Android package.  Even after moving to this model, it became necessary to take control over the serialize and deserialize logic to improve performances.</p>
+<p><em>I should note that performance was fine without all of these tweaks on my Captivate, however I felt that the performance work would definitely be of benefit no matter what device was used.</em></p>
+<h2>Base Graphics</h2>
+<p>After getting the model object loading straightened out, I moved on to building the basic level graphics using AndEngine Textures, Texture Regions and Sprites.  This was something I did not expect to be incredibly difficult, however I&#8217;m finding that not to be the case.  Pingus reuses a number of images, with modifiers like <em>rotate 90, rotate 90 flip </em>and<em> rotate 180.</em></p>
+<h3>Flipping Images</h3>
+<p>In digging around the internet, all examples of a horizontal &#8220;flip&#8221; operation suggest something like the following:</p>
+<pre name="code" class="java">
+sprite.setScale(-1, 1); // Horizontal flip
+</pre>
+<p>I tried various combinations with a negative scale factor, all of which resulted in the sprite disappearing.  Finally, I stumbled on to the answer in the AndEngine forums, using the texture region rather than the sprite.</p>
+<pre name="code" class="java">
+sprite.getTextureRegion().setFlippedHorizontal(true);
+</pre>
+<h3>90 Degree Rotation</h3>
+<p>90 Degree (and presumably 270 degree) rotations are proving difficult to get right.  I&#8217;ve tried a couple of options to get this right.  If I rotate 90 degrees with a rotation centered at (0,0), I end up with something offset primarily in the negative X direction. </p>
+<p><a href="https://www.setera.org/wp-content/uploads/2010/11/rotate0.png"><img src="https://www.setera.org/wp-content/uploads/2010/11/rotate0.png" alt="" title="90 Degree Rotate With (0,0) Offset" width="480" height="320" class="aligncenter size-full wp-image-285" srcset="https://www.setera.org/wp-content/uploads/2010/11/rotate0.png 480w, https://www.setera.org/wp-content/uploads/2010/11/rotate0-300x200.png 300w" sizes="(max-width: 480px) 100vw, 480px" /></a></p>
+<p>While I can compensate in this case using a hardcoded offset:</p>
+<pre name="code" class="java">
+setPosition(position.x + 50, position.y);
+</pre>
+<p>I have no idea why this value works or how it may be tied to any of the image bounds.  I&#8217;ve also tried rotating around the center of the image resulting in similarly bizarre results.  When rotating around the image center, the offsets to get things in place were similarly questionable:</p>
+<pre name="code" class="java">
+setPosition(position.x - 125, position.y + 125);
+</pre>
+<p>Until I can find the correct calculation that properly places the 90 degree rotations, I&#8217;m kind of stuck.  Even with the hardcoded offsets, I know I&#8217;m not quite in the right spot, although it appears to be pretty close:</p>
+<p><a href="https://www.setera.org/wp-content/uploads/2010/11/rotate0plus50x.png"><img src="https://www.setera.org/wp-content/uploads/2010/11/rotate0plus50x.png" alt="" title="90 Degree Rotate Plus 50 Pixel X Offset" width="480" height="320" class="aligncenter size-full wp-image-290" srcset="https://www.setera.org/wp-content/uploads/2010/11/rotate0plus50x.png 480w, https://www.setera.org/wp-content/uploads/2010/11/rotate0plus50x-300x200.png 300w" sizes="(max-width: 480px) 100vw, 480px" /></a></p>
+<p>In order to get a better idea of where the actual problem images are located, I hacked up the troublesome image a bit, adding an ugly white border and a black spot in the upper-left corner.  With this in place, it is at least clear where this image is located relative to all of the other images:<br />
+<a href="https://www.setera.org/wp-content/uploads/2010/11/outlined.png"><img src="https://www.setera.org/wp-content/uploads/2010/11/outlined.png" alt="" title="Troubled Image With Outline" width="480" height="320" class="aligncenter size-full wp-image-292" srcset="https://www.setera.org/wp-content/uploads/2010/11/outlined.png 480w, https://www.setera.org/wp-content/uploads/2010/11/outlined-300x200.png 300w" sizes="(max-width: 480px) 100vw, 480px" /></a></p>
+<p>With the outline, it is possible to pick out the specific image, but it does not give any further insights into the calculations to get those images in place.</p>
+<h3>What&#8217;s Next?</h3>
+<p>After spending a considerable amount of time trying to figure out the rotation offsets, it is probably a good time to step back for a bit and look elsewhere.  Hopefully coming back to this problem after some down time, an explanation will reveal itself.  In the meantime, adding the ability to zoom (multi-touch!) and pan within the level seems like a interesting next project that will give me a chance to dig further into the AndEngine support.  In addition, it may also be useful in helping determine the correct location for the rotated items.  </p>
+]]>
+   </content:encoded>
+   <wfw:commentrss>
+    https://www.setera.org/2010/11/21/pingus-on-android/feed/
+   </wfw:commentrss>
+   <slash:comments>
+    2
+   </slash:comments>
+  </item>
+  <item>
+   <title>
+    More iPhone Versus Java Differences
+   </title>
+   <link/>
+   https://www.setera.org/2010/08/15/more-iphone-versus-java-differences/
+   <pubdate>
+    Sun, 15 Aug 2010 18:36:59 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[iPhone]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <category>
+    <![CDATA[Uncategorized]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=264
+   </guid>
+   <description>
+    <![CDATA[In my previous entries, I&#8217;ve discussed a few things that caught me off guard while learning iPhone development.  In the last couple of weeks, I&#8217;ve picked up an Android device to dig into that platform a bit and probably will spend less time playing with iPhone development.  Before I move too far away from iPhone, [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>In my <a href="https://www.setera.org/2010/04/25/iphone-versus-exceptions/">previous</a> <a href="https://www.setera.org/2010/03/07/still-a-geek/">entries</a>, I&#8217;ve discussed a few things that caught me off  guard while learning iPhone development.  In the last couple of weeks,  I&#8217;ve picked up an Android device to dig into that platform a bit and probably will spend less time playing with iPhone development.   Before I move too far away from iPhone, I wanted to wrap up the  remaining differences I found interesting between the iPhone and Java platforms.</p>
+<p><span id="more-264"></span></p>
+<h2>Run Loop Required for Networking</h2>
+<p>One of the earliest things I needed to do was build out the networking code for my Daap player.  Initially, I was building this code as a standard Macintosh command-line application.  I happily wrote code to set up a synchronous networking call using NSURL and NSURLConnection and then&#8230; nothing.  Unlike Java, it was necessary to have a &#8220;run loop&#8221; executing.  Had I done this test initially on the iPhone emulator, I would have never run across this since the iPhone has a run loop executing the application.</p>
+<h2>Subclassing and Class Clusters</h2>
+<p>In Java, it is not possible to add functionality to another class.  The only real available option is to subclass the class of interest.  In general, that works ok until you get a class like java.lang.String that isn&#8217;t mean to be subclassed, in which case you need to provide some kind of wrapper or utility class.  My first attempt at adding some new functionality to NSMutableDictionary from the Foundation library was using a subclass.  I was greeted at runtime by an error similar to:</p>
+<p><em>2010-08-14 09:55:48.965 TestProject[1136:207] *** Terminating app due to uncaught exception &#8216;NSInvalidArgumentException&#8217;, reason: &#8216;*** -[NSDictionary objectForKey:]: method only defined for abstract class.  Define -[MyDictionarySubclass objectForKey:]!&#8217;<br />
+</em></p>
+<p>What the heck?  It turns out that most of the collection classes in iPhone are implemented as class clusters.  According to the <a href="http://developer.apple.com/mac/library/documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html">Cocoa Fundamentals Guide</a> class clusters</p>
+<p><em>&#8230; group a number of private, concrete subclasses under a  public, abstract superclass. The grouping of classes in this way  simplifies the publicly visible architecture of an object-oriented  framework without reducing its functional richness.</em></p>
+<p>Had I really needed to subclass NSMutableDictionary, <a href="http://cocoawithlove.com/2008/12/ordereddictionary-subclassing-cocoa.html">Matt Gallagher talks about how to create such a subclass</a>.  In my case, it turns out what I really needed was just an Objective-C category to add methods to NSMutableDictionary directly rather than subclassing the class.  Categories remind me of similar functionality available in Smalltalk, allowing additional methods to be attached to classes.  The class &#8220;shape&#8221; (instance variables) cannot be changed using categories, but new methods can be added which is very helpful for creating utility methods on a specific class rather than having to do it on a separate class.  Looking around the documentation for the various frameworks in the system, it is amazing to see how many classes are extended using categories.</p>
+<h2>Summary</h2>
+<p>Although my Daap player is nowhere near complete, the project did offer me plenty of visibility into Objective-C and iPhone development.  Objective-C and, in particular, the various libraries for iPhone development are incredibly powerful.  While there were a few growing pains along the way, the transition to doing iPhone development was relatively straightforward and enjoyable.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    iPhone Versus Exceptions
+   </title>
+   <link/>
+   https://www.setera.org/2010/04/25/iphone-versus-exceptions/
+   <pubdate>
+    Mon, 26 Apr 2010 00:55:15 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[iPhone]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=249
+   </guid>
+   <description>
+    <![CDATA[I&#8217;m continuing to make slow forward progress with my DAAP-based music player for the iPhone.  My most recent changes have taken this in the direction of being much more like the standard music player functionality on the iPhone.  In particular, I&#8217;ve switched over to using a tab view controller for the major perspectives of viewing [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>I&#8217;m continuing to make slow forward progress with my DAAP-based music player for the iPhone.  My most recent changes have taken this in the direction of being much more like the standard music player functionality on the iPhone.  In particular, I&#8217;ve switched over to using a tab view controller for the major perspectives of viewing the music database.</p>
+<p><span id="more-249"></span></p>
+<div id="attachment_250" style="width: 424px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2010/04/mainscreen.png"><img class="size-full wp-image-250" title="Tab Based Main View" src="https://www.setera.org/wp-content/uploads/2010/04/mainscreen.png" alt="" width="414" height="770" srcset="https://www.setera.org/wp-content/uploads/2010/04/mainscreen.png 414w, https://www.setera.org/wp-content/uploads/2010/04/mainscreen-161x300.png 161w" sizes="(max-width: 414px) 100vw, 414px" /></a><p class="wp-caption-text">Tab Based Main View</p></div>
+<p>In addition, there is now a (very) rudimentary <em>Now Playing</em> screen to control playback.</p>
+<div id="attachment_251" style="width: 424px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2010/04/nowplaying.png"><img class="size-full wp-image-251" title="Now Playing View" src="https://www.setera.org/wp-content/uploads/2010/04/nowplaying.png" alt="Now Playing View" width="414" height="770" srcset="https://www.setera.org/wp-content/uploads/2010/04/nowplaying.png 414w, https://www.setera.org/wp-content/uploads/2010/04/nowplaying-161x300.png 161w" sizes="(max-width: 414px) 100vw, 414px" /></a><p class="wp-caption-text">Now Playing View</p></div>
+<h2>iPhone Versus Exceptions</h2>
+<p>In my <a href="https://www.setera.org/2010/03/07/still-a-geek/">last entry</a>, I mentioned that I&#8217;ve struggled through some interesting differences when dealing with iPhone development when compared to my years of experience in Java.  As a long time Java developer, I&#8217;m very accustomed to the use of checked exceptions.   Most, if not all, error handling in Java is handled through the creation, throwing and catching of exceptions.  I&#8217;m accustomed to catching/handling exceptions from the underlying libraries as well as creating and  throwing my own exceptions.  It was with that background that I approached iPhone development and quickly found out that is not the recommended way of handling error conditions.  While, the standard try/catch functionality is supported in Objective-C, the documentation for Cocoa development makes it clear that using exceptions should be avoided:</p>
+<p><em><strong>Important</strong>: You should reserve the use of exceptions for programming or unexpected runtime errors such as out-of-bounds collection access, attempts to mutate immutable objects, sending an invalid message, and losing the connection to the window server. You usually take care of these sorts of errors with exceptions when an application is being created rather than at runtime.</em></p>
+<p><em>Instead of exceptions, error objects (NSError) and the Cocoa error-delivery mechanism are the recommended way to communicate expected errors in Cocoa applications. </em></p>
+<p>This is an important difference to understand when transitioning to Cocoa development from Java development.  While this is important to understand when making calls to library methods and functions, it must also be considered when defining your own calling conventions and libraries.  In order to remain consistent, it is important to use the pattern of NSError usage.</p>
+]]>
+   </content:encoded>
+  </item>
+ </channel>
+</rss>

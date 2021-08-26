@@ -1,0 +1,132 @@
+/*  
+Theme Name: EclipseME
+Theme URI: http://eclipseme.org/
+Description: The default EclipseME theme
+Version: 1.0
+Author: Craig Setera
+Author URI: http://eclipseme.org/
+*/
+
+/* From EclipseME styling */
+body
+{
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 10pt;
+	color: #000000;
+}
+p
+{
+	margin-top: 4pt;
+	margin-bottom: 4pt;
+}
+a.menu:link, a.menu:visited, a.menu:active
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	text-decoration: underline;
+}
+
+a.menu:hover
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #FFFFFF;
+	text-decoration: underline;
+}
+.keyword		
+{
+	font-style: italic;
+}
+.directory		
+{
+	font-family: courier-new, courier, mono;
+	font-weight: bold;
+}
+.code			
+{
+	font-family: courier-new, courier, mono;
+}
+.codeindent		
+{
+	font-family: courier-new, courier, mono;
+	margin-left: 0.5in;
+}
+.testedworking	
+{
+	color: green
+}
+.reportedworking
+{
+	color: blue
+}
+.partialsupport 
+{
+	color: magenta
+}
+.broken			
+{
+	color: red
+}
+.bold			
+{
+	font-weight: bold
+}
+.center			
+{
+	text-align: center
+}
+td				
+{
+	vertical-align: top
+}
+td.middle		
+{
+	vertical-align: middle
+}
+.PageHeader
+{
+	color: white;
+	font-weight: bold;
+	font-size: 10pt;
+}
+.PageTitle
+{
+	font-size: 14pt;
+	font-weight: bold;
+}
+h1
+{
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 12pt;
+	font-weight: bold;
+	color: #990000;
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px dashed #999999;
+	text-transform: capitalize;
+	margin-top: 10pt;
+	margin-bottom: 4pt;
+}
+h2
+{
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 11pt;
+	text-decoration: underline;
+}
+h3
+{
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 10pt;
+	font-style: italic;
+}
+.TOC
+{
+	font-weight: bold;
+	color: #990000;
+}
+a.TOC:link, a.TOC:visited, a.TOC:active
+{
+	color: #990000;
+	text-decoration: underline;
+}

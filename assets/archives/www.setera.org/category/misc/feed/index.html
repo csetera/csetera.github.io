@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:wfw="http://wellformedweb.org/CommentAPI/">
+ <channel>
+  <title>
+   Miscellaneous – Et-Setera
+  </title>
+  <atom:link href="https://www.setera.org/category/misc/feed/" rel="self" type="application/rss+xml">
+  </atom:link>
+  <link/>
+  https://www.setera.org
+  <description>
+   Ramblings of a geek
+  </description>
+  <lastbuilddate>
+   Fri, 15 Nov 2013 00:56:48 +0000
+  </lastbuilddate>
+  <language>
+   en-US
+  </language>
+  <sy:updateperiod>
+   hourly
+  </sy:updateperiod>
+  <sy:updatefrequency>
+   1
+  </sy:updatefrequency>
+  <generator>
+   https://wordpress.org/?v=4.5.24
+  </generator>
+  <item>
+   <title>
+    Android Analog Clock Collection
+   </title>
+   <link/>
+   https://www.setera.org/2012/05/28/android-analog-clock-collection/
+   <pubdate>
+    Mon, 28 May 2012 13:59:09 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Miscellaneous]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=664
+   </guid>
+   <description>
+    <![CDATA[While I haven&#8217;t entirely given up on my Android Clock Widget project, it has definitely stalled out for the time being. I have some potential ideas on how to move that project forward, but between work and coaching soccer I just don&#8217;t have much time at the moment to play around. In the meantime, I [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>While I haven&#8217;t entirely given up on my <a href="https://www.setera.org/2011/09/04/clock-widget-project/">Android Clock Widget</a> project, it has definitely stalled out for the time being.  I have some potential ideas on how to move that project forward, but between work and coaching soccer I just don&#8217;t have much time at the moment to play around.  In the meantime, I wanted a nice analog clock on my phone&#8217;s homescreen.  While looking around the Google Play store, I came across the awesome <a href="https://play.google.com/store/apps/details?id=smsr.com.acc&#038;hl=en">Analog Clock Collection</a>.  For anyone looking for an analog clock widget, I&#8217;d recommend taking a look.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Oops I Did It Again…
+   </title>
+   <link/>
+   https://www.setera.org/2011/10/29/oops-i-did-it-again/
+   <pubdate>
+    Sat, 29 Oct 2011 19:29:22 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Miscellaneous]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=617
+   </guid>
+   <description>
+    <![CDATA[One of these days I may actually learn my lesson when it comes to installing new software. Lately I&#8217;ve been busy with work and recovering from some surgery, so I haven&#8217;t really had the energy to focus on any of my personal programming projects. Instead, I&#8217;ve been doing a lot of home network administration and [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>One of these days I may actually learn my lesson when it comes to installing new software.  Lately I&#8217;ve been busy with work and recovering from some surgery, so I haven&#8217;t really had the energy to focus on any of my personal programming projects.  Instead, I&#8217;ve been doing a lot of home network administration and software updates.  In a multiple cases, I&#8217;m reminded of why being on the leading (bleeding?) edge of software may not always be the easiest place to be.<br />
+<span id="more-617"></span></p>
+<h2>Ubuntu 11.10</h2>
+<p>I have long used a dual-interface Linux machine at the edge of my network to provide firewall, file server and other interesting services to the network.  My old machine was getting pretty noisy and I was sure something was going to die and leave me in a bad situation.  I bought a cheap new HP tower machine to replace the old machine and was tripped up on multiple things:</p>
+<ul>
+<li>I didn&#8217;t think about the fact that my old network card would no longer fit in the machine due to bus changes.  I was further surprised to find out that it was impossible to find a PCIExpress networking card without going online and waiting for delivery.</li>
+<li>The latest Ubuntu installer guessed that the HP machine was using UEFI for bootloading and failed to boot Ubuntu.  With lots of great help from the Ubuntu forums I was able to diagnose the issue and get grub-pc installed and the machine working.</li>
+</ul>
+<p>This machine is up and running pretty well now after the false starts.  I wish I could say the same for my Dell laptop.  Every time a new version of Ubuntu comes out, I tell myself I&#8217;m not going to update for <b>at least</b> a month and that I should really wait a bit longer for the issues to shake out.  Every time, I lose the battle to wait and end up regretting it after the fact.  While Ubuntu 11.10 has some pretty nice new features, I ran up against new regressions that I had to work through.</p>
+<ul>
+<li><a href="https://bugs.launchpad.net/ubuntu/+source/linux/+bug/872652">Screen backlight issue</a></li>
+<li><a href="https://bugs.launchpad.net/ubuntu/+source/linux-restricted-modules/+bug/314574">Wireless connection issue</a></li>
+</ul>
+<p>Thanks to Canonical engineer Kamal Mostafa, I have a patched kernel to fix the backlight issue.  Unfortunately, I&#8217;m still struggling with the wireless issue that kills my wireless router from time to time.</p>
+<h2>Cyanogen Mod 7.1</h2>
+<p>I was excited to see <a href="http://www.cyanogenmod.com">Cyanogen Mod 7.1</a> come out with support for my Samsung Captivate.  I&#8217;m a fan of Android, but not a big fan of the crap-tacular software loaded on AT&#038;T devices by default.  The idea of installing a new ROM that was cleaner and faster was enticing.  While the transition has been relatively smooth, I&#8217;m seeing some strange behavior with my external 32G SD card.  I&#8217;m also having a hard time figuring out if the battery life is as good as it had been on the stock firmware.  I need to do more digging to figure that out.</p>
+<p>In the end, I don&#8217;t expect my habit of installing new software will likely change very soon.  I usually try to avoid upgrading too early for mission critical hardware such as my work laptop.  Admittedly half of the fun of installing new software is that you can <b>usually</b> dig yourself out of a hole if something goes wrong.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    We are experiencing technical difficulties…
+   </title>
+   <link/>
+   https://www.setera.org/2011/06/26/we-are-experiencing-technical-difficulties/
+   <pubdate>
+    Mon, 27 Jun 2011 00:59:07 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Miscellaneous]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=518
+   </guid>
+   <description>
+    <![CDATA[OK&#8230; not really. It is more a case of experiencing zero time for non-work technical projects. As my girls traveling soccer team nears the end of the season, things should start to lighten up just a bit. With that said, I have a few upcoming work and personal trips that will continue to keep me [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>OK&#8230; not really.  It is more a case of experiencing zero time for non-work technical projects.  As my girls traveling soccer team nears the end of the season, things should start to lighten up just a bit.  With that said, I have a few upcoming work and personal trips that will continue to keep me away from personal programming projects like <a href="https://www.setera.org/2011/05/07/pingus-on-android-%E2%80%93-%E2%80%9Cdestroyable-terrain%E2%80%9D-3/">AndPingus</a> for at least a little bit longer.</p>
+<p>In the meantime, the <a href="http://www.eclipse.org/">Eclipse Foundation</a> has managed to deliver the <a href="http://www.eclipse.org/org/press-release/20110622indigo.php">Eclipse Indigo release</a> on schedule yet again.  It is always strange to see the <a href="http://www.eclipse.org/mtj/">Eclipse MTJ project</a> based on my original <a href="http://www.eclipseme.org">EclipseME</a> work ship &#8220;yet another release&#8221; with no involvement from me.  While I&#8217;m glad to see the project outlive my involvement, I have to admit it is kind of strange.  </p>
+<p>Unfortunately (or maybe fortunately?), JavaME is on a downward slide at this point.  I had hoped to take a look at the <a href="http://www.eclipse.org/epp/usagedata/">Eclipse Usage Data</a> for the MTJ project and get an idea of its usage as well.  However, I&#8217;m still looking  around for up to date usage data.  If I find something useful or interesting, I will try to post something here.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Still A Geek…
+   </title>
+   <link/>
+   https://www.setera.org/2010/03/07/still-a-geek/
+   <pubdate>
+    Mon, 08 Mar 2010 00:38:01 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[iPhone]]>
+   </category>
+   <category>
+    <![CDATA[Miscellaneous]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=228
+   </guid>
+   <description>
+    <![CDATA[Looking back to my last post way back in October it is pretty clear when things started getting crazy at work.  The team survived and managed to finish another awesome version of mFoundry&#8217;s mBanking product.  These days I&#8217;m doing more management and less coding, but I&#8217;m definitely still a geek.  Given that iPhone applications are [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Looking back to my last post<strong><em> <a href="https://www.setera.org/2009/10/17/once-a-geek/">way back in October</a> </em></strong>it is pretty clear when things started getting crazy at work.  The team survived and managed to finish another awesome version of <a href="http://www.mfoundry.com">mFoundry&#8217;s</a> <a href="http://www.mfoundry.com/mbanking_overview.html">mBanking</a> product.  These days I&#8217;m doing more management and less coding, but I&#8217;m definitely still a geek.  Given that iPhone applications are all the rage in the industry, I&#8217;ve been trying to learn my way around iPhone development.  During the process of learning, I&#8217;ve noticed a few things that have caught me off guard compared to Java.  I hope to post a few of those things in the days and weeks to come that may help other Java programmers.  In the meantime, I thought I would share some about the project I&#8217;ve been playing with to learn.</p>
+<p><span id="more-228"></span></p>
+<h3>The Project</h3>
+<p>In order to learn a new platform, I always like to have a project to build.  Looking around, I didn&#8217;t find any iPhone <a href="http://en.wikipedia.org/wiki/Digital_Audio_Access_Protocol">DAAP</a> clients for servers like the <a href="http://www.fireflymediaserver.org/">Firefly Media Server</a>.  I&#8217;ve been trying to build a DAAP client as my learning experience.  I have a good chunk of the navigation working at this point.</p>
+<div id="attachment_236" style="width: 217px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2010/03/player1.png"><img class="size-full wp-image-236" title="DAAP Player" src="https://www.setera.org/wp-content/uploads/2010/03/player1.png" alt="" width="207" height="385" /></a><p class="wp-caption-text">DAAP Player</p></div>
+<p>The <a href="http://developer.apple.com/iphone/library/documentation/DataManagement/Conceptual/iPhoneCoreData01/Introduction/Introduction.html">iPhone Core Data support</a> is amazingly powerful, providing a good chunk of the underlying data source support for table views like those in the client.</p>
+<div id="attachment_241" style="width: 217px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2010/03/player2.png"><img class="size-full wp-image-241" title="DAAP Albums" src="https://www.setera.org/wp-content/uploads/2010/03/player2.png" alt="" width="207" height="385" srcset="https://www.setera.org/wp-content/uploads/2010/03/player2.png 207w, https://www.setera.org/wp-content/uploads/2010/03/player2-161x300.png 161w" sizes="(max-width: 207px) 100vw, 207px" /></a><p class="wp-caption-text">DAAP Albums</p></div>
+<p>There is still much to be done, but the iPhone SDK has provided a large amount of functionality for a very small price.  As always, I continue to be impressed with the power packed into modern handsets.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Once A Geek…
+   </title>
+   <link/>
+   https://www.setera.org/2009/10/17/once-a-geek/
+   <pubdate>
+    Sat, 17 Oct 2009 20:41:09 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Miscellaneous]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=219
+   </guid>
+   <description>
+    <![CDATA[Looking back, it is hard to believe how long I&#8217;ve been a computer programming geek.  Way back in February of 1984, I had my first game, Circus, published in Compute! magazine.  Thanks to Kevin Savetz, you can now see my original article as well as many other classic computer magazine articles.  These articles are back [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Looking back, it is hard to believe how long I&#8217;ve been a computer programming geek.  Way back in February of 1984, I had my first game, Circus,<a href="http://www.atarimagazines.com/compute/issue45/Circus.php"> published in Compute! magazine</a>.  Thanks to Kevin Savetz, you can now see <a href="http://www.atarimagazines.com/compute/issue45/Circus.php">my original article</a> as well as <a href="http://www.atarimagazines.com/">many other classic computer magazine articles</a>.  These articles are back in the days before the internet, laptops and cell phones.  The iPhone in my pockets has so much more power and storage, that it is hard to imagine programming as I did in those days.</p>
+<div id="attachment_221" style="width: 431px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2009/10/Pg66.png"><img class="size-full wp-image-221" title="Circus VIC-20" src="https://www.setera.org/wp-content/uploads/2009/10/Pg66.png" alt="Circus VIC-20" width="421" height="373" srcset="https://www.setera.org/wp-content/uploads/2009/10/Pg66.png 421w, https://www.setera.org/wp-content/uploads/2009/10/Pg66-300x265.png 300w" sizes="(max-width: 421px) 100vw, 421px" /></a><p class="wp-caption-text">Circus VIC-20</p></div>
+<p>Looking back at this article publication, there are a couple of things that make it particularly interesting to me 20+ years later.</p>
+<ul>
+<li>My original program was written on the Commodore VIC-20 (5K of user memory!) and was <em><strong>rewritten</strong><strong> for all of the other computers for the publication</strong></em>.  This happened behind the scenes and I was unaware until publication.  Not surprising, they also rewrote all of my descriptive text.</li>
+<li>This game was a clone of a game that was available in arcades and pizza places around that same time.  Had I done this in present day, this game would very likely not have been published due to copyright or other legal issues.</li>
+</ul>
+<p>20+ years later, I&#8217;m still a computer programmer (software engineer?).  While I program less than I used to, it is cool that my hobby so many years ago has been able to be both a hobby and a source of income for so many years.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    First Post
+   </title>
+   <link/>
+   https://www.setera.org/2009/05/31/first-post/
+   <pubdate>
+    Mon, 01 Jun 2009 00:00:42 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Miscellaneous]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=51
+   </guid>
+   <description>
+    <![CDATA[While I&#8217;ve had a blog for EclipseME for a few years now, I finally decided to convert setera.org over to using WordPress.  I&#8217;m looking forward to using this space now and into the future.   Please have a look around!]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>While I&#8217;ve had a blog for <a href="http://eclipseme.org">EclipseME</a> for a few years now, I finally decided to convert setera.org over to using WordPress.  I&#8217;m looking forward to using this space now and into the future.   Please have a look around!</p>
+]]>
+   </content:encoded>
+  </item>
+ </channel>
+</rss>

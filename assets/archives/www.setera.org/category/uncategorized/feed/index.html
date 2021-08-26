@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:wfw="http://wellformedweb.org/CommentAPI/">
+ <channel>
+  <title>
+   Uncategorized – Et-Setera
+  </title>
+  <atom:link href="https://www.setera.org/category/uncategorized/feed/" rel="self" type="application/rss+xml">
+  </atom:link>
+  <link/>
+  https://www.setera.org
+  <description>
+   Ramblings of a geek
+  </description>
+  <lastbuilddate>
+   Fri, 15 Nov 2013 00:56:48 +0000
+  </lastbuilddate>
+  <language>
+   en-US
+  </language>
+  <sy:updateperiod>
+   hourly
+  </sy:updateperiod>
+  <sy:updatefrequency>
+   1
+  </sy:updatefrequency>
+  <generator>
+   https://wordpress.org/?v=4.5.24
+  </generator>
+  <item>
+   <title>
+    More iPhone Versus Java Differences
+   </title>
+   <link/>
+   https://www.setera.org/2010/08/15/more-iphone-versus-java-differences/
+   <pubdate>
+    Sun, 15 Aug 2010 18:36:59 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[iPhone]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <category>
+    <![CDATA[Uncategorized]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=264
+   </guid>
+   <description>
+    <![CDATA[In my previous entries, I&#8217;ve discussed a few things that caught me off guard while learning iPhone development.  In the last couple of weeks, I&#8217;ve picked up an Android device to dig into that platform a bit and probably will spend less time playing with iPhone development.  Before I move too far away from iPhone, [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>In my <a href="https://www.setera.org/2010/04/25/iphone-versus-exceptions/">previous</a> <a href="https://www.setera.org/2010/03/07/still-a-geek/">entries</a>, I&#8217;ve discussed a few things that caught me off  guard while learning iPhone development.  In the last couple of weeks,  I&#8217;ve picked up an Android device to dig into that platform a bit and probably will spend less time playing with iPhone development.   Before I move too far away from iPhone, I wanted to wrap up the  remaining differences I found interesting between the iPhone and Java platforms.</p>
+<p><span id="more-264"></span></p>
+<h2>Run Loop Required for Networking</h2>
+<p>One of the earliest things I needed to do was build out the networking code for my Daap player.  Initially, I was building this code as a standard Macintosh command-line application.  I happily wrote code to set up a synchronous networking call using NSURL and NSURLConnection and then&#8230; nothing.  Unlike Java, it was necessary to have a &#8220;run loop&#8221; executing.  Had I done this test initially on the iPhone emulator, I would have never run across this since the iPhone has a run loop executing the application.</p>
+<h2>Subclassing and Class Clusters</h2>
+<p>In Java, it is not possible to add functionality to another class.  The only real available option is to subclass the class of interest.  In general, that works ok until you get a class like java.lang.String that isn&#8217;t mean to be subclassed, in which case you need to provide some kind of wrapper or utility class.  My first attempt at adding some new functionality to NSMutableDictionary from the Foundation library was using a subclass.  I was greeted at runtime by an error similar to:</p>
+<p><em>2010-08-14 09:55:48.965 TestProject[1136:207] *** Terminating app due to uncaught exception &#8216;NSInvalidArgumentException&#8217;, reason: &#8216;*** -[NSDictionary objectForKey:]: method only defined for abstract class.  Define -[MyDictionarySubclass objectForKey:]!&#8217;<br />
+</em></p>
+<p>What the heck?  It turns out that most of the collection classes in iPhone are implemented as class clusters.  According to the <a href="http://developer.apple.com/mac/library/documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html">Cocoa Fundamentals Guide</a> class clusters</p>
+<p><em>&#8230; group a number of private, concrete subclasses under a  public, abstract superclass. The grouping of classes in this way  simplifies the publicly visible architecture of an object-oriented  framework without reducing its functional richness.</em></p>
+<p>Had I really needed to subclass NSMutableDictionary, <a href="http://cocoawithlove.com/2008/12/ordereddictionary-subclassing-cocoa.html">Matt Gallagher talks about how to create such a subclass</a>.  In my case, it turns out what I really needed was just an Objective-C category to add methods to NSMutableDictionary directly rather than subclassing the class.  Categories remind me of similar functionality available in Smalltalk, allowing additional methods to be attached to classes.  The class &#8220;shape&#8221; (instance variables) cannot be changed using categories, but new methods can be added which is very helpful for creating utility methods on a specific class rather than having to do it on a separate class.  Looking around the documentation for the various frameworks in the system, it is amazing to see how many classes are extended using categories.</p>
+<h2>Summary</h2>
+<p>Although my Daap player is nowhere near complete, the project did offer me plenty of visibility into Objective-C and iPhone development.  Objective-C and, in particular, the various libraries for iPhone development are incredibly powerful.  While there were a few growing pains along the way, the transition to doing iPhone development was relatively straightforward and enjoyable.</p>
+]]>
+   </content:encoded>
+  </item>
+ </channel>
+</rss>

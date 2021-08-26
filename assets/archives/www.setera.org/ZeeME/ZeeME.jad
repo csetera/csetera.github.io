@@ -1,0 +1,11 @@
+GameTitle0: Minizork
+MIDlet-Jar-Size: 73982
+GameFile0: /zeeme/games/minizork.z3
+MIDlet-1: Minizork,,zmachine.ui.ZeeMEMidlet
+MIDlet-Jar-URL: ZeeME.jar
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Version: 0.1.0
+MIDlet-Name: Minizork
+MIDlet-Vendor: Craig Setera
+MicroEdition-Profile: MIDP-1.0
+GameLength0: 52216

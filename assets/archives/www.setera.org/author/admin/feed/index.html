@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:wfw="http://wellformedweb.org/CommentAPI/">
+ <channel>
+  <title>
+   Craig Setera – Et-Setera
+  </title>
+  <atom:link href="https://www.setera.org/author/admin/feed/" rel="self" type="application/rss+xml">
+  </atom:link>
+  <link/>
+  https://www.setera.org
+  <description>
+   Ramblings of a geek
+  </description>
+  <lastbuilddate>
+   Fri, 15 Nov 2013 00:56:48 +0000
+  </lastbuilddate>
+  <language>
+   en-US
+  </language>
+  <sy:updateperiod>
+   hourly
+  </sy:updateperiod>
+  <sy:updatefrequency>
+   1
+  </sy:updatefrequency>
+  <generator>
+   https://wordpress.org/?v=4.5.24
+  </generator>
+  <item>
+   <title>
+    Android Native Libraries In Root Context
+   </title>
+   <link/>
+   https://www.setera.org/2013/11/14/android-native-libraries/
+   <pubdate>
+    Fri, 15 Nov 2013 00:56:48 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <category>
+    <![CDATA[Software Development]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=733
+   </guid>
+   <description>
+    <![CDATA[As usual, I am jumping around from one side project to the next, always looking for the next shiny object. A repeat of a Broadcom networking bug on my new HTC One, lead me to want to be able to dig into the underlying network packets. There are a number of pieces to this project [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>As usual, I am jumping around from one side project to the next, always looking for the next shiny object.  A repeat of a <a href="http://forum.xda-developers.com/showthread.php?t=1408433&#038;page=2">Broadcom networking bug</a> on my new HTC One, lead me to want to be able to dig into the underlying network packets.  There are a number of pieces to this project that are completely new to me, including building native code libraries (libpcap) and executing code as a root user on-device to allow libpcap to access the low-level networking stack.<br />
+<span id="more-733"></span></p>
+<h2>Building libpcap</h2>
+<p>After a lot of false starts, it turned out to be fairly simple to build the native libpcap library.  In my original attempts, I was working to build the entire <a href="http://www.cyanogenmod.org/">Cyanogenmod ROM</a> for my device so I could harvest the libpcap so file.  While this might have eventually worked out, it was a very difficult path.  In the end, the “proper” way to do this was to use the Android NDK to build the Android libpcap native code as part of my project.</p>
+<h2>Running As Root</h2>
+<p>Libpcap requires root access in order to access the low-level networking stack.  On the surface, this seems pretty simple to do using the support provided by the <a href="https://code.google.com/p/roottools/">RootTools project</a>.  However, it turns out that the combination of root applications and access to native libraries is a bit tricky.</p>
+<p>When using RootTools, launching a root application actually involves multiple processes:</p>
+<div id="attachment_736" style="width: 310px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2013/11/processes_diag.png"><img src="https://www.setera.org/wp-content/uploads/2013/11/processes_diag-300x95.png" alt="Processes Diagram" width="300" height="95" class="size-medium wp-image-736" srcset="https://www.setera.org/wp-content/uploads/2013/11/processes_diag-300x95.png 300w, https://www.setera.org/wp-content/uploads/2013/11/processes_diag.png 620w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">Processes Diagram</p></div>
+<p>The initial process is the main application with an Android Activity.  This activity interacts with the RootTools support which checks for root ability and, if found, launches a new shell process with root authority.  That root shell mediates between the original Activity and root applications launched on behalf of the original activity.  For short-running root applications, it is possible to communicate using the STDIN and STDOUT pipes.  However, for a long-running service, it makes more sense to use some other communications channel to communicate between the Android activity and the root application.  One possibility would be a Unix domain socket provided by the <code>android.net.LocalSocket</code> class.</p>
+<h2>Native Libraries And Root</h2>
+<p>While RootTools provides the infrastructure shown above, the problem I ran into was that when launching the root application (process 3), it would not be able to locate the native libraries that the JNI class was dependent on.  The RootTools <code>JavaCommandCapture</code> class launches the Java class using a command similar to:</p>
+<blockquote><p>dalvikvm -cp /path/to/anbuild.dex com.android.internal.util.WithFramework com.stericson.RootTools.containers.RootClass my.package.RootCodeClass
+</p></blockquote>
+<p>This long incantation starts up a new Java Application using the Dalvik VM.  The WithFramework class <em>&#8220;Binds native framework methods and then invokes a main class with the remaining arguments&#8221;</em> and then calls the <code>RootClass</code> class.  Finally, the <code>RootClass</code> class invokes the <code>RootCodeClass</code> constructor passing along the remaining command-line arguments.  RootTools expects the root functionality to occur as part of the construction of <code>RootCodeClass</code>, however if <code>RootCodeClass</code> has a JNI dependency on a native library the functionality will fail with an <code>UnsatisfiedLinkError</code> exception.</p>
+<h3>dalvik.system.BaseDexClassLoader</h3>
+<p>Normally, Java may be started with the <code>“java.library.path”</code> System property to set the location of the native libraries, however that doesn&#8217;t appear to work correctly in Android.  In addition, the <code>LD_LIBRARY_PATH</code> from Linux won&#8217;t work either.  It turns out that Android actually pulls the native library path from the Classloader that is used to load the class referring to the native static library.</p>
+<p>The <code>dalvik.system.BaseDexClassLoader</code> class acts as both a Java class loader mechanism and a holder of the native library path.  The initial classloader started by the Dalvik VM does not contain any references to the static library path leading to the linkage failures.  I was able to solve this, by adding yet another layer of indirection:</p>
+<div id="attachment_735" style="width: 310px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2013/11/classloader_diag.png"><img src="https://www.setera.org/wp-content/uploads/2013/11/classloader_diag-300x136.png" alt="Classloader Diagram" width="300" height="136" class="size-medium wp-image-735" srcset="https://www.setera.org/wp-content/uploads/2013/11/classloader_diag-300x136.png 300w, https://www.setera.org/wp-content/uploads/2013/11/classloader_diag.png 510w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">Classloader Diagram</p></div>
+<p>In this model, the initial <code>RootCodeClass</code> constructor creates a new <code>BaseDexClassLoader</code> instance referencing the native libraries path.</p>
+<pre name="code" class="java">
+JavaRootClassloader targetLoader = new JavaRootClassloader(
+				nativeClasspath, 
+				null, 
+				nativeLibPath, 
+				getClass().getClassLoader());
+</pre>
+<p>In this case, the native classpath and native libraries have been passed in as command-line arguments from the originating Activity.  The targetLoader must be used to load the target class in order for the target JNI classes to use the provided native libraries.  It is important that these classes be kept in separate classloaders to avoid errors in the Dalvik VM about redefinition of classes.</p>
+<pre name="code" class="java">
+Class&lt;?&gt;targetClass = targetLoader.loadTargetClass(targetClassName); 
+</pre>
+<p>The loadTargetClass method is a special Classloader method that uses classloader-first rather than parent-first lookup to avoid using the parent classloader which does not have the native library path defined.</p>
+<pre name="code" class="java">
+/**
+	 * Load the specified class, making sure to *not* do a parent-first load
+	 * as we will end up with the wrong classloader.
+	 * 
+	 * @param targetClassName
+	 * @return
+	 * @throws ClassNotFoundException 
+	 */
+	public Class&lt;?&gt; loadTargetClass(String targetClassName) 
+		throws ClassNotFoundException 
+	{
+        Class&lt;?&gt; clazz = findLoadedClass(targetClassName);
+
+        if (clazz == null) {
+        	// Look locally first for our target class
+        	clazz = findClass(targetClassName);
+        }
+
+        return clazz;
+	}
+</pre>
+<p>In the current implementation, all of the information necessary to launch the final targetted class with native library path properly set is provided by the originating Activity.  Remaining command-line arguments are captured by the “launcher” class and provided as the arguments to the main method of the target class.</p>
+<h3>DEX Files</h3>
+<p>The default RootTools approach for creating Java classes that can be loaded in the root context is by adding the <code>com.stericson.RootTools.containers.RootClass.Candidate</code> annotation to the root classes and then processing with the <code>com.stericson.RootTools.containers.RootClass</code> class.  The result of this process it to create an Android DEX file called <code>anbuild.dex</code>.  I struggled to get this all to play nicely and get all of the proper classes into the proper DEX files.  As mentioned, loading the same class in different classloaders can cause Dalvik VM errors that look like the following:</p>
+<blockquote><p>Class ref in pre-verified class resolved to unexpected implementation</p></blockquote>
+<p>In the end, I ended up with three separate DEX files:</p>
+<ul>
+<li>Standard application DEX file<br />
+This file is automatically built and handled by the Android tools and the runtime.  This file contains the code for the main Activity and associated logic</li>
+<p></p>
+<li>Root Launcher DEX file<br />
+This file contains just necessary classes to be loaded by RootTools and to create the special Classloader instance that can load the real root functionality while specifying the native libraries path.  This DEX file is generated as rootlauncher.dex into the res/raw folder</li>
+<p></p>
+<li>Root functionality DEX file<br />
+This DEX file contains the Java functionality that will run in a root context that will have access to the native libraries necessary to interact with the system.  This DEX file is generated as root.dex into the res/raw folder</li>
+<p>
+</ul>
+<h4>Building The DEX Files</h4>
+<p>Because of this added complexity in creating the multiple DEX files, I had to take more control over the build process.  Taking advantage of Eclipse&#8217;s ability to call out to an Ant build.xml as part of the build process.  For instance, the build.xml file for generating the DEX files would look something like:</p>
+<pre name="code" class="xml">
+    &lt;target name="build_root_dexs"&gt;  	
+    	&lt;property name="dx.path" value="${user.home}/software/unzipped/android-sdk-macosx-personal/build-tools/${build-tools-version}/dx" /&gt;
+    	
+    	&lt;!-- Build the root launcher --&gt;
+    	&lt;unzip src="libs/RootTools-3.3.jar" dest="bin/classes-launcher"&gt;
+    		&lt;patternset&gt;
+    			&lt;include name="com/stericson/RootTools/containers/*.class"/&gt;
+    		&lt;/patternset&gt;
+    	&lt;/unzip&gt;
+
+    	&lt;echo message="Building rootlauncher.dex" /&gt;
+    	&lt;exec executable="${dx.path}"&gt;
+    		&lt;arg value="--dex" /&gt;
+    		&lt;arg value="--output=res/raw/rootlauncher.dex" /&gt;
+    		&lt;arg value="--positions=lines" /&gt;
+    		&lt;arg value="bin/classes-launcher" /&gt;
+    	&lt;/exec&gt;
+    	
+    	&lt;!-- Build the code that will run within the root container --&gt;
+    	&lt;echo message="Building root.dex" /&gt;
+    	&lt;exec executable="${dx.path}"&gt;
+    		&lt;arg value="--dex" /&gt;
+    		&lt;arg value="--output=res/raw/root.dex" /&gt;
+    		&lt;arg value="--positions=lines" /&gt;
+    		&lt;arg value="bin/classes-root" /&gt;
+    	&lt;/exec&gt;
+  &lt;/target&gt;
+
+</pre>
+<p>An Ant build can be added to the build file via the Project properties:</p>
+<div id="attachment_740" style="width: 310px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2013/11/eclipse_builders.png"><img src="https://www.setera.org/wp-content/uploads/2013/11/eclipse_builders-300x258.png" alt="Eclipse Builders" width="300" height="258" class="size-medium wp-image-740" srcset="https://www.setera.org/wp-content/uploads/2013/11/eclipse_builders-300x258.png 300w, https://www.setera.org/wp-content/uploads/2013/11/eclipse_builders.png 618w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">Eclipse Builders</p></div>
+<p>Add a new Ant Builder:</p>
+<div id="attachment_739" style="width: 310px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2013/11/eclipse_builder_type.png"><img src="https://www.setera.org/wp-content/uploads/2013/11/eclipse_builder_type-300x293.png" alt="Eclipse Builder Type" width="300" height="293" class="size-medium wp-image-739" srcset="https://www.setera.org/wp-content/uploads/2013/11/eclipse_builder_type-300x293.png 300w, https://www.setera.org/wp-content/uploads/2013/11/eclipse_builder_type.png 386w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">Eclipse Builder Type</p></div>
+<p>Choose your Ant file:</p>
+<div id="attachment_738" style="width: 310px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2013/11/eclipse_builder_order.png"><img src="https://www.setera.org/wp-content/uploads/2013/11/eclipse_builder_order-300x270.png" alt="Ant Build File" width="300" height="270" class="size-medium wp-image-738" srcset="https://www.setera.org/wp-content/uploads/2013/11/eclipse_builder_order-300x270.png 300w, https://www.setera.org/wp-content/uploads/2013/11/eclipse_builder_order.png 482w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">Ant Build File</p></div>
+<p>And save the resulting build launch configuration:</p>
+<div id="attachment_737" style="width: 310px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2013/11/eclipse_ant_builder.png"><img src="https://www.setera.org/wp-content/uploads/2013/11/eclipse_ant_builder-300x248.png" alt="Build Configuration" width="300" height="248" class="size-medium wp-image-737" srcset="https://www.setera.org/wp-content/uploads/2013/11/eclipse_ant_builder-300x248.png 300w, https://www.setera.org/wp-content/uploads/2013/11/eclipse_ant_builder.png 699w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">Build Configuration</p></div>
+<h2>Caveats</h2>
+<p>While this approach is working fine for Android 4.0+, there are a lot of pieces of this puzzle that are private/internal to the Android implementation.  For that reason, many of these internals have the chance of changing over time.  In particular:</p>
+<ul>
+<li>The <code>com.android.internal.util.WithFramework</code> is clearly marked as an internal class</li>
+<li>The <code>dalvik.system.BaseDexClassLoader</code> is yet another internal class that may disappear or change</li>
+<li>Even the Dalvik VM will likely go away in the future and be replaced by the new <a href="https://source.android.com/devices/tech/dalvik/art.html">Android ART</a> runtime</li>
+</ul>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Debugging Titanium Android Native Modules
+   </title>
+   <link/>
+   https://www.setera.org/2013/08/08/debugging-titanium-android-native-modules/
+   <pubdate>
+    Thu, 08 Aug 2013 11:24:04 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Appcelerator Titanium]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=710
+   </guid>
+   <description>
+    <![CDATA[Recently, I&#8217;ve been playing a bit with the Appcelerator Titanium Platform. In particular, I&#8217;ve been working on a native Android module for Titanium. In their documentation, they state: The best way to debug your Android modules right now is a bit old fashioned. When there is a problem or unexpected behavior in your module, use [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Recently, I&#8217;ve been playing a bit with the <a href="http://www.appcelerator.com/platform/titanium-platform/">Appcelerator Titanium Platform</a>.  In particular, I&#8217;ve been working on a <a href="http://docs.appcelerator.com/titanium/3.0/#!/guide/Android_Module_Development_Guide">native Android module for Titanium</a>.  In their documentation, <a href="http://docs.appcelerator.com/titanium/3.0/#!/guide/Android_Module_Development_Guide-section-29004945_AndroidModuleDevelopmentGuide-Debugging">they state</a>:</p>
+<blockquote><p>The best way to debug your Android modules right now is a bit old fashioned. When there is a problem or unexpected behavior in your module, use log statements to trace through your code&#8217;s execution.
+</p></blockquote>
+<p><span id="more-710"></span><br />
+However, the functionality I was working on was complicated enough that I needed the comfort of Eclipse step-debugging to truly feel like I was able to see what was going on inside my code.  With that in mind, I dug around and figured out a way to debug these native modules and discovered some cool functionality in the <a href="http://developer.android.com/tools/help/adb.html">Android Debug Bridge (adb)</a> that I was previously unaware of.</p>
+<h2>Native Module Creation</h2>
+<p>The module creation and implementation steps are no different than the standard steps <a href="http://docs.appcelerator.com/titanium/3.0/#!/guide/Android_Module_Development_Guide-section-29004945_AndroidModuleDevelopmentGuide-CreatinganAndroidModule">documented by Appcelerator</a>.  Once that is complete and it is time to do some debugging, I found the following to work to allow for step-wise debugging of the module.  (NOTE: This has only been attempted on-device, although I expect it should work on top of the Android emulator).</p>
+<h2>Setting Up Module Debugging</h2>
+<p>After making testable changes, execute the &#8220;install&#8221; target of the build.xml file for your module to get the module properly <a href="http://docs.appcelerator.com/titanium/3.0/#!/guide/Android_Module_Development_Guide-section-29004945_AndroidModuleDevelopmentGuide-Running">installed on the device</a>.  At this point, it is necessary to enable debugging of your module&#8217;s example application if it has not already been handled via the Android manifest file.  The basic command looks like:</p>
+<blockquote><p>adb shell am set-debug-app -w &#8211;persistent my.package.name</p></blockquote>
+<p>Where the two options can be used dependent on your needs:</p>
+<ul>
+<li>-w<br />Wait for debugger at start.  Use this if you need to debug something that starts early in the module&#8217;s startup routines</li>
+<li>&#8211;persistent<br />Remember that this application should be debuggable across reinstalls.</li>
+</ul>
+<p>With a debuggable application, it is actually possible to use the application&#8217;s process identifier to connect up a local port to the application&#8217;s JDWP agent.  For instance, if you look at the output of &#8220;ps&#8221; from the shell, you will see something like the following:</p>
+<blockquote><p>USER     PID   PPID  VSIZE  RSS     WCHAN    PC         NAME<br />
+&#8230;..<br />
+u0_a48    1471  795   215984 29516 ffffffff b7e62157 S com.seterasoft.sync.scheduler<br />
+&#8230;..
+</p></blockquote>
+<p>With this knowledge, adb can be used to forward host traffic from TCP port 9999 to the JDWP agent for this particular process using this command:</p>
+<blockquote><p>adb forward tcp:9999 jdwp:1471</p></blockquote>
+<p>Given my infinite laziness, I prefer to do this linkage with a script to avoid manual steps as much as possible.  Thus, I created this simple Groovy script to query for &#8220;my.package.name&#8221; and link it to local TCP port 9999.  </p>
+<pre name="code" class="java">
+#!/usr/bin/env groovy
+
+def ps = "adb shell ps".execute().text
+def reader = new StringReader(ps)
+
+def found = false
+reader.eachLine { line ->
+    if (line =~ /my\.package\.name/) {
+    	found = true
+        def pid = line.split()[1]
+        println "Forwarding tcp:9999 => jdwp:${pid}"
+        println "adb forward tcp:9999 jdwp:${pid}".execute().text
+    }
+}
+
+if (!found) {
+	println "Did not find application process.  Is it running?"
+}
+</pre>
+<p>It is important to understand that this linkage must be re-established each time that the application is rebuilt and/or redeployed.  This will result in a new process being started and a new ADB forward must then be configured.</p>
+<h2>Debug with Eclipse Remote Debugger</h2>
+<p>With debugging enabled for the application and a JDWP forwarding set up via ADB, it is just a matter of using the standard Eclipse remote debugging configuration.  Assuming the previously documented forwarding set up, Eclipse remote debugging can be configured to debug via local port 9999 and ADB will proxy those requests to the running (or waiting) application.</p>
+<p><a href="https://www.setera.org/wp-content/uploads/2013/08/Screen-Shot-2013-08-06-at-2.46.49-PM.png"><img src="https://www.setera.org/wp-content/uploads/2013/08/Screen-Shot-2013-08-06-at-2.46.49-PM.png" alt="Screen Shot 2013-08-06 at 2.46.49 PM" width="465" height="237" class="aligncenter size-full wp-image-712" srcset="https://www.setera.org/wp-content/uploads/2013/08/Screen-Shot-2013-08-06-at-2.46.49-PM.png 465w, https://www.setera.org/wp-content/uploads/2013/08/Screen-Shot-2013-08-06-at-2.46.49-PM-300x152.png 300w" sizes="(max-width: 465px) 100vw, 465px" /></a></p>
+<p>While this requires a bit more setup than some standard debugging and only works for Android, I&#8217;ve still found it well worth the time and effort while working on native modules for Android in Titanium.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Ubuntu 12.10 Screen Brightness on Sony VAIO T15
+   </title>
+   <link/>
+   https://www.setera.org/2013/03/03/ubuntu-12-10-screen-brightness-on-sony-vaio-t15/
+   <pubdate>
+    Mon, 04 Mar 2013 01:44:00 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Ubuntu]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=691
+   </guid>
+   <description>
+    <![CDATA[I recently picked up a new Sony VAIO T15 ultrabook laptop. A really nicely designed laptop for a good price. After repartitioning, I was able to install Ubuntu 12.10 in a dual-boot arrangement fairly easily and Ubuntu worked well out of the box. However, screen brightness controls using Gnome power manager did not work out [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>I recently picked up a new Sony VAIO T15 ultrabook laptop. A really nicely designed laptop for a good price. After repartitioning, I was able to install Ubuntu 12.10 in a dual-boot arrangement fairly easily and Ubuntu worked well out of the box. However, screen brightness controls using Gnome power manager did not work out of the box and I had to to some hacking to get at least a bit of control.<br />
+<span id="more-691"></span></p>
+<h2>Background</h2>
+<p>Normally, the backlight brightness is controlled via the /sys/class/backlight/acpi_video0 ACPI interface. However, the Intel video driver installs its controls as /sys/class/backlight/intel_backlight. This mismatch causes Gnome power management to fail to operate on this laptop.</p>
+<h2>Short-term Solution</h2>
+<p>While there are a number of different potential solutions on the internet, I was unable to get any of those to work as-is. The closest I came was with the solution list <a href="http://ubuntuforums.org/showthread.php?t=2033273&amp;page=2">here</a>. However, the keyboard shortcuts didn&#8217;t seem to work. Using those scripts, I was able to roll my own solution.</p>
+<h3>Scripts</h3>
+<p>Based on the solution listed above, I created two script files.</p>
+<p><b>~/bin/brightdown.sh</b><br />
+<code><br />
+#!/bin/bash</code></p>
+<p>curr=`cat /sys/class/backlight/intel_backlight/actual_brightness`<br />
+if [ $curr -gt 0 ]; then<br />
+curr=$((curr-610));<br />
+echo $curr &gt; /sys/class/backlight/intel_backlight/brightness;<br />
+fi</p>
+<p><b>~/bin/brightdown.sh</b><br />
+<code><br />
+#!/bin/bash</code></p>
+<p>curr=`cat /sys/class/backlight/intel_backlight/actual_brightness`<br />
+if [ $curr -lt 4882 ]; then<br />
+curr=$((curr+610));<br />
+echo $curr &gt; /sys/class/backlight/intel_backlight/brightness;<br />
+fi</p>
+<p>Note that I placed these scripts in my personal <b>bin</b> folder rather than /etc/acpi. Each of the scripts must also be made executable.</p>
+<h3>Root Access When Necessary</h3>
+<p>Writing to the ACPI interface in the <code>/sys</code> folder requires root access. In order to avoid having to use <code>su</code> or <code>sudo</code> with a password in order to invoke these commands, the sudoers file can be configured to allow root execution without password for <i>just these commands</i>.</p>
+<p>Using the <code>visudo</code> command, alter the sudo file as follows:</p>
+<p><code><br />
+username ALL=NOPASSWD: /home/username/bin/brightdown.sh<br />
+username ALL=NOPASSWD: /home/username/bin/brightup.sh<br />
+</code></p>
+<p>where <i>username</i> is the name of the user to be given root access without a password to those commands.</p>
+<h3>Keyboard Shortcuts</h3>
+<p>As I was unable to get the standard keyboard shortcuts to work correctly with any of the suggested, I chose instead to create my own keyboard shortcuts. After installing, <a href="https://code.google.com/p/autokey/wiki/Overview">autokey</a>, I was able to create my own shortcuts for decreasing and increasing the brightness using the above scripts. In my case, I chose Ctrl+Shift+- to decrease the brightness and Ctrl+Shift++ to increase the brightness.</p>
+<p>Using the autokey application, choose <i>New -&gt; Script</i>. Enter the name &#8220;Brightness Down&#8221;. Enter the command:</p>
+<p><code>system.exec_command("sudo /home/username/bin/brightdown.sh")</code></p>
+<p>and set the Hotkey to Ctrl+Shift+-.</p>
+<div id="attachment_696" style="width: 755px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2013/03/brightdown.png"><img class="size-full wp-image-696" alt="Decrease Brightness" src="https://www.setera.org/wp-content/uploads/2013/03/brightdown.png" width="745" height="639" srcset="https://www.setera.org/wp-content/uploads/2013/03/brightdown.png 745w, https://www.setera.org/wp-content/uploads/2013/03/brightdown-300x257.png 300w" sizes="(max-width: 745px) 100vw, 745px" /></a><p class="wp-caption-text">Autokey set up to decrease brightness</p></div>
+<p>Do the same for increase the brightness, using the other script file.</p>
+<h2>Longer Term Solution</h2>
+<p>There is some hope according to <a href="https://bugs.launchpad.net/ubuntu/+source/linux/+bug/954661">Ubuntu Bug 954661</a> that this problem will be fixed via a kernel fix in the upcoming 13.04 Ubuntu release.  If that happens, I will be able to remove these simple workaround.  For the short-term though this works reasonably well.  The primary missing feature is auto-dimming the screen for power savings.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Pinpointing Android LocationManagerService Battery Drain
+   </title>
+   <link/>
+   https://www.setera.org/2012/09/10/pinpointing-android-locationmanagerservice-battery-drain/
+   <pubdate>
+    Tue, 11 Sep 2012 02:16:30 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=675
+   </guid>
+   <description>
+    <![CDATA[Recently, I was seeing severe battery drain on my Samsung Galaxy SII. Using the most awesome BetterBatteryStats application I was able to see that my phone was not being able to go into deep sleep due to WakeLocks from the LocationManagerService. Android&#8217;s LocationManagerService, is responsible for managing LocationProviders and issues location updates and alerts. If [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Recently, I was seeing severe battery drain on my Samsung Galaxy SII.  Using the most awesome <a href="https://play.google.com/store/apps/details?id=com.asksven.betterbatterystats">BetterBatteryStats</a> application I was able to see that my phone was not being able to go into deep sleep due to WakeLocks from the <em>LocationManagerService</em>.  Android&#8217;s <em>LocationManagerService</em>, is responsible for managing <em>LocationProviders</em> and issues location updates and alerts.  If applications are requesting location updates too frequently, the <em>LocationManagerService</em> may be forced to keep the phone awake to provide those updates.<br />
+<span id="more-675"></span><br />
+It is possible using the <em>dumpsys</em> command via the <em>adb shell</em> to find out which applications are currently requesting location updates.  For instance:</p>
+<blockquote><p>adb shell dumpsys > /path/to/dumpsys.txt</p></blockquote>
+<p>will collect the output of the <em>dumpsys</em> command run on the connected device into the specified file.  Looking in the output from <em>dumpsys</em> the <em>LocationManagerService</em> dumps into a section</p>
+<blockquote><p>DUMP OF SERVICE location:</p></blockquote>
+<p>Within that section, there are a number of LocationListeners that look something like</p>
+<blockquote><p>    Receiver{419e7ad0 Listener android.os.BinderProxy@41b8abd0}mUpdateRecords: {passive=UpdateRecord{421e75a0 mProvider: passive mUid: 10084}}:<br />
+      passive:<br />
+        UpdateRecord{421e75a0 mProvider: passive mUid: 10084}<br />
+        mProvider=passive mReceiver=Receiver{419e7ad0 Listener android.os.BinderProxy@41b8abd0}mUpdateRecords: {passive=UpdateRecord{421e75a0 mProvider: passive mUid: 10084}}<br />
+        mMinTime=0 mMinDistance=0.0<br />
+        mSingleShot=false<br />
+        mUid=10084<br />
+        mLastFixBroadcast:<br />
+          mProvider=network mTime=1346849822124<br />
+          mLatitude=44.0836108 mLongitude=-92.5067299<br />
+          mHasAltitude=false mAltitude=0.0<br />
+          mHasSpeed=false mSpeed=0.0<br />
+          mHasBearing=false mBearing=0.0<br />
+          mHasAccuracy=true mAccuracy=20.0<br />
+          mExtras=Bundle[mParcelledData.dataSize=148]<br />
+        mLastStatusBroadcast=0
+</p></blockquote>
+<p>This UpdateRecord is particularly bad because it is requesting constant updates:</p>
+<blockquote><p>mMinTime=0 mMinDistance=0.0</p></blockquote>
+<p>The <em>mUid</em> specifies the process identifier requesting the updates.  The processes are dumped within the same output and can be found in the section beginning:</p>
+<blockquote><p>ACTIVITY MANAGER RUNNING PROCESSES (dumpsys activity processes)</p></blockquote>
+<p>Each application is listed separately by process identifier:</p>
+<blockquote><p>  *APP* UID 10084 ProcessRecord{41af23e8 13037:com.google.android.apps.maps:LocationFriendService/10084}<br />
+    class=com.google.googlenav.android.AndroidGmmApplication<br />
+    dir=/data/app/com.google.android.apps.maps-1.apk publicDir=/data/app/com.google.android.apps.maps-1.apk data=/data/data/com.google.android.apps.maps<br />
+    packageList=[com.google.android.apps.maps]<br />
+    compat={240dpi always-compat}<br />
+    thread=android.app.ApplicationThreadProxy@42457df0 curReceiver=null<br />
+    pid=13037 starting=false lastPss=0<br />
+    lastActivityTime=-6m23s226ms lruWeight=-50901 serviceb=false keeping=false hidden=true empty=true<br />
+    oom: max=15 hidden=12 curRaw=12 setRaw=12 cur=12 set=12<br />
+    curSchedGroup=1 setSchedGroup=1 systemNoUi=false trimMemoryLevel=0<br />
+    hasShownUi=false pendingUiClean=false hasAboveClient=false<br />
+    setIsForeground=false foregroundServices=false forcingToForeground=null<br />
+    persistent=false removed=false<br />
+    adjSeq=3891 lruSeq=535<br />
+    lastWakeTime=0 time used=0<br />
+    lastCpuTime=20 time used=+20ms<br />
+    lastRequestedGc=-6m28s504ms lastLowMemory=-6m28s504ms reportLowMemory=false<br />
+    conProviders={ContentProviderRecord{418add48 com.android.providers.settings.SettingsProvider}=1}<br />
+    receivers=[ReceiverList{41a84148 13037 com.google.android.apps.maps:LocationFriendService/10084 remote:41a83f70}]
+</p></blockquote>
+<p>With this information we have our culprit.  Process identifier 10084 is Google&#8217;s LocationFriendService (Latitude).  This process is requesting constant location updates and causing severe battery drain.  In this particular case, I was able to go through the Latitude settings and disable everything related to location updates.  With those settings disabled and a quick restart, my battery drain went back to normal again.  Hopefully this information may be helpful to others having battery drain issues related to location updated.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    EclipseME Lives!
+   </title>
+   <link/>
+   https://www.setera.org/2012/07/01/eclipseme-lives/
+   <pubdate>
+    Sun, 01 Jul 2012 19:58:18 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Eclipse]]>
+   </category>
+   <category>
+    <![CDATA[EclipseME]]>
+   </category>
+   <category>
+    <![CDATA[Mobile Tools for Java]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=663
+   </guid>
+   <description>
+    <![CDATA[When I started hacking on EclipseME way back in 2001, I never would have guessed that it would still be going in 2012 in use in the form of the Eclipse Mobile Tools for Java (MTJ) project and a shipping product. A few days ago, Gorkem Ercan of Nokia announced that the latest version of [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>When I started hacking on <a href="http://www.eclipseme.org">EclipseME</a> way back in 2001, I never would have guessed that it would still be going in 2012 in use in the form of the <a href="http://www.eclipse.org/mtj/">Eclipse Mobile Tools for Java (MTJ)</a> project and a shipping product.  A few days ago, Gorkem Ercan of Nokia announced that the <a href="http://www.gorkem-ercan.com/2012/06/new-ide-based-on-eclipse-mtj.html">latest version of Nokia SDK for Java is now based on Eclipse MTJ</a>.  Even though I don&#8217;t really spend any time on the MTJ project these days, it is very cool to see the software still being put to good use.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Android Analog Clock Collection
+   </title>
+   <link/>
+   https://www.setera.org/2012/05/28/android-analog-clock-collection/
+   <pubdate>
+    Mon, 28 May 2012 13:59:09 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Miscellaneous]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=664
+   </guid>
+   <description>
+    <![CDATA[While I haven&#8217;t entirely given up on my Android Clock Widget project, it has definitely stalled out for the time being. I have some potential ideas on how to move that project forward, but between work and coaching soccer I just don&#8217;t have much time at the moment to play around. In the meantime, I [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>While I haven&#8217;t entirely given up on my <a href="https://www.setera.org/2011/09/04/clock-widget-project/">Android Clock Widget</a> project, it has definitely stalled out for the time being.  I have some potential ideas on how to move that project forward, but between work and coaching soccer I just don&#8217;t have much time at the moment to play around.  In the meantime, I wanted a nice analog clock on my phone&#8217;s homescreen.  While looking around the Google Play store, I came across the awesome <a href="https://play.google.com/store/apps/details?id=smsr.com.acc&#038;hl=en">Analog Clock Collection</a>.  For anyone looking for an analog clock widget, I&#8217;d recommend taking a look.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Still Deadlocked
+   </title>
+   <link/>
+   https://www.setera.org/2012/03/11/still-deadlocked/
+   <pubdate>
+    Sun, 11 Mar 2012 21:19:16 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Clock]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=649
+   </guid>
+   <description>
+    <![CDATA[Wow&#8230; three months since my last post about my Android Clock Widget Project. While I&#8217;ve failed to bring stability to the clock selector during that time, I have figured out that the problem is not actually due to a deadlock. Instead, it appears that my project is tickling a bug in the Dalvik VM&#8217;s garbage [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Wow&#8230; three months since my <a href="https://www.setera.org/2011/12/27/deadlocked/">last post</a> about my <a href="https://www.setera.org/2011/09/04/clock-widget-project/">Android Clock Widget Project</a>.  While I&#8217;ve failed to bring stability to the clock selector during that time, I have figured out that the problem is not actually due to a deadlock.  Instead, it appears that my project is tickling a bug in the Dalvik VM&#8217;s garbage collector.  </p>
+<p><span id="more-649"></span><br />
+Depending on the device and operating system level, there are subtle changes in behavior.  In most cases, there is a crash log written to the /data/tombstones folder.  The most revealing tombstone file has come from a Samsung Captivate running a version of the <a href="http://forum.aokp.co/">AOKP ICS ROM</a>.</p>
+<pre name="code" class="shell">
+Build fingerprint: 'samsung/SGH-I897/SGH-I897:2.3.5/GINGERBREAD/UCKK4:user/release-keys'
+pid: 1758, tid: 1777  >>> com.seterasoft.mclock <<<
+signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr deadbaad
+ r0 deadbaad  r1 00000001  r2 40000000  r3 00000000
+ r4 00000000  r5 00000027  r6 50c53b40  r7 00000064
+ r8 41338018  r9 00000024  10 50c53a6c  fp 50c53ab0
+ ip ffffffff  sp 50c53a30  lr 400fdf79  pc 400fa694  cpsr 60000030
+ d0  0000000000000000  d1  0000000000000000
+ d2  0000000000000000  d3  0000000000000000
+ d4  0000000000000000  d5  0000000000000000
+ d6  0000000000000000  d7  0000000000000000
+ d8  0000000000000000  d9  0000000000000000
+ d10 0000000000000000  d11 0000000000000000
+ d12 0000000000000000  d13 0000000000000000
+ d14 0000000000000000  d15 0000000000000000
+ d16 0000000000000000  d17 0000000000000000
+ d18 0000000000000000  d19 0000000000000000
+ d20 0000000000000000  d21 0000000000000000
+ d22 0000000000000000  d23 0000000000000000
+ d24 0000000000000000  d25 0000000000000000
+ d26 0000000000000000  d27 0000000000000000
+ d28 0100010001000100  d29 0100010001000100
+ d30 0000000000000000  d31 3ff0000000000000
+ scr 2800001b
+
+         #00  pc 00017694  /system/lib/libc.so
+         #01  pc 00007bb0  /system/lib/libcutils.so (mspace_merge_objects)
+         #02  pc 0007b6c8  /system/lib/libdvm.so (_Z21dvmHeapSourceFreeListjPPv)
+         #03  pc 00042ce0  /system/lib/libdvm.so
+         #04  pc 00032f94  /system/lib/libdvm.so (_Z22dvmHeapBitmapSweepWalkPK10HeapBitmapS1_jjPFvjPPvS2_ES2_)
+         #05  pc 00042c9c  /system/lib/libdvm.so (_Z27dvmHeapSweepUnmarkedObjectsbbPjS_)
+         #06  pc 000337c0  /system/lib/libdvm.so (_Z25dvmCollectGarbageInternalPK6GcSpec)
+         #07  pc 0005ff6c  /system/lib/libdvm.so (_Z17dvmCollectGarbagev)
+         #08  pc 00072a8e  /system/lib/libdvm.so
+         #09  pc 00030a8c  /system/lib/libdvm.so
+         #10  pc 00034248  /system/lib/libdvm.so (_Z12dvmInterpretP6ThreadPK6MethodP6JValue)
+         #11  pc 0006c692  /system/lib/libdvm.so (_Z14dvmCallMethodVP6ThreadPK6MethodP6ObjectbP6JValueSt9__va_list)
+         #12  pc 0006c6b4  /system/lib/libdvm.so (_Z13dvmCallMethodP6ThreadPK6MethodP6ObjectP6JValuez)
+         #13  pc 0005f7c0  /system/lib/libdvm.so
+         #14  pc 00012c14  /system/lib/libc.so (__thread_entry)
+         #15  pc 00012744  /system/lib/libc.so (pthread_create)
+</pre>
+<p>The failing function appears to be implemented in dlmalloc.c in the Android source, but I really don't have any good idea about what might be causing the crash.  I also don't appear to be the only one, as there are <a href="http://groups.google.com/a/googleproductforums.com/forum/#!category-topic/maps/google-maps-for-mobile/XVVmMYYxLUI">other references on the web</a> that look similar.</p>
+<p>To this point, I've tried a variety of things to try to track down the problem.  I've gone so far as to try to build my own version of the <a href="http://www.cyanogenmod.com/">Cyanogenmod</a> with the idea that I might be able to add more logging output.  So far, I've not had any luck with this approach.  I generally have no problem walking away from hobby projects when I lose interest.  However, this has turned into a competition of me versus the computer and I'm not quite ready to give up.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Deadlocked
+   </title>
+   <link/>
+   https://www.setera.org/2011/12/27/deadlocked/
+   <pubdate>
+    Wed, 28 Dec 2011 01:26:58 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Mobile]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=628
+   </guid>
+   <description>
+    <![CDATA[I recently started spending more time on my Android Clock Widget Project. I&#8217;ve implemented some much needed caching of the SVG definitions, speeding performance of clock rendering substantially. In addition, I&#8217;ve been working on building a nice graphical clock selector. Unfortunately, this selector is causing me lots of frustration due to a race condition that [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>I recently started spending more time on my <a href="https://www.setera.org/2011/09/04/clock-widget-project/">Android Clock Widget Project</a>.  I&#8217;ve implemented some much needed caching of the SVG definitions, speeding performance of clock rendering substantially.  In addition, I&#8217;ve been working on building a nice graphical clock selector.  Unfortunately, this selector is causing me lots of frustration due to a race condition that keeps deadlocking the application&#8217;s UI thread.<br />
+<span id="more-628"></span></p>
+<p>Parsing and rendering the various SVG layers that make up each clock is a relatively expensive operation.  Locking up the user interface while doing these operations is bad design and leads the user to believe that the application may not working correctly.  What I&#8217;m attempting to do seems pretty simple on the surface.  The following screen capture shows the (partially working) goal:</p>
+<p><a href="https://www.setera.org/wp-content/uploads/2011/12/clocks.png"><img src="https://www.setera.org/wp-content/uploads/2011/12/clocks.png" alt="Clock Skin Selector" title="Clock Skin Selector" width="328" height="488" class="aligncenter size-full wp-image-629" srcset="https://www.setera.org/wp-content/uploads/2011/12/clocks.png 328w, https://www.setera.org/wp-content/uploads/2011/12/clocks-201x300.png 201w" sizes="(max-width: 328px) 100vw, 328px" /></a></p>
+<p>The selector consists of two columns, an image of the clock on the left and the name of the clock on the right.  Using the standard ListActivity support, the goal is to show an indeterminate progress image in the left column until the layers have been loaded and rendered.  At that point, the animated progress image is hidden and the clock image is displayed.  </p>
+<p>The implementation is simple in concept.  The list adapter subclasses the standard BaseAdapter implementation to provide an implementation of the <em>getView</em> method.  The <em>getView</em> method delegates loading of the clock&#8217;s image to an asynchronous task, keeping the user interface alive.  When the asynchronous task completes, it signals the adapter by calling <em>notifyDataSetChanged</em>.  The next call to <em>getView</em> will hide the progress animation and display the rendered image.</p>
+<p>While this is mostly working, I&#8217;m hitting a random deadlock condition that locks up the UI thread, usually resulting in an &#8220;Application Not Responding&#8221; (ANR) error message to the user.  All of my attempts to diagnose and resolve this issue have ended with nothing but frustration.  So far, I&#8217;ve tried all of the &#8220;standard&#8221; approaches to diagnose this:</p>
+<ul>
+<li>Analyzed the traces.txt file generated by the ANR.  <br /> Unfortunately, the process never shows up in the log file.</li>
+<li>Force-generated a traces.txt file using <em>kill SIGQUIT pid</em> while the application was still running.  <br />Again, the process doesn&#8217;t seem to show up.  Instead, I see &#8220;W/dalvikvm(19144): threadid=4: spin on suspend #1 threadid=9 (pcf=0)&#8221; whenever attempting this.</li>
+<li>Attempted to use the standard Eclipse debugger to suspend the UI thread once it is locked up.  <br />No big surprise that it did not work.</li>
+<li>Added lots of Log output trying to pinpoint the hang.  <br />At least from that logging, it doesn&#8217;t <b>appear</b> to be a hang anywhere directly in my code.</li>
+<li>I even tried to use method tracing to see if I could figure anything out.</li>
+</ul>
+<p>At this point, I&#8217;ve run out of good ideas on how to track down and fix this problem on my own.  I&#8217;ve gone ahead and joined the Google android-developers group and asked for ideas on solving this.  I&#8217;m still waiting for my question to clear moderation to see if anyone else can offer any insights.  If anyone reading this has any ideas, I&#8217;d love to hear them.  Until then, this project is officially deadlocked.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Relinking Android Market Applications
+   </title>
+   <link/>
+   https://www.setera.org/2011/11/02/relinking-android-market-applications/
+   <pubdate>
+    Wed, 02 Nov 2011 23:00:59 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=595
+   </guid>
+   <description>
+    <![CDATA[When I initially set up my Samsung Captivate, I used my work email as the primary email address for the device. This caused my Android Market applications to be associated with my work email. When Google started allowing multiple accounts, I added my personal GMail account to the device and managed to get a confusing [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>When I initially set up my Samsung Captivate, I used my work email as the primary email address for the device.   This caused my Android Market applications to be associated with my work email.  When Google started allowing multiple accounts, I added my personal GMail account to the device and managed to get a confusing mix of installed applications associated with each account.  After being frustrated with this for a while, I decided I needed to fix this.</p>
+<p><span id="more-595"></span><br />
+The internet offered no examples of how I might go about doing this, so I went spelunking on my own.  For those that may need to do something similar, I decided to capture the steps I used to relink my Android Market applications with a single GMail address.  Before I go any further, let me offer some warnings:</p>
+<p><b></p>
+<ul>
+<li style="background-color: #FF0000; color: #FFFFFF;">I AM NOT LIABLE IF YOU BREAK YOUR PHONE BY TRYING THIS. <br /> IF YOU DON&#8217;T KNOW WHAT YOU ARE DOING, DO NOT ATTEMPT THESE CHANGES.</li>
+<li style="background-color: #FF0000; color: #FFFFFF;">My steps include a few things to hopefully avoid major breakage, however I&#8217;d urge caution.  Be careful.</li>
+<li style="background-color: #FF0000; color: #FFFFFF;">Your device must be rooted in order to make the necessary changes.</li>
+<li style="background-color: #FF0000; color: #FFFFFF;">These steps only work for free applications.  Paid applications are associated to a particular Google account using DRM.</li>
+<li style="background-color: #FF0000; color: #FFFFFF;">CONSIDER YOURSELF WARNED</li>
+</ul>
+<p></b></p>
+<p><b>November 13, 2011 Update</b></p>
+<p><i>While this appears to work in the short term, I&#8217;m noticing applications slowly migrating back to the original accounts.  I&#8217;m not entirely sure where those values are being stored or how to fix this permanently.</i></p>
+<h2>The Market Assets Database</h2>
+<p>As of this writing, Android Market (implemented by the com.android.vending package) stores the linkage between an Android application package and the associated Android Market account in the file:</p>
+<pre name="code" class="shell">
+/data/data/com.android.vending/databases/market_assets.db
+</pre>
+<p>The <i>ASSETS</i> table within that SQLITE database contains the mappings as seen in this screenshot.</p>
+<p><a href="https://www.setera.org/wp-content/uploads/2011/10/Screenshot-at-2011-10-29-124410.png"><img src="https://www.setera.org/wp-content/uploads/2011/10/Screenshot-at-2011-10-29-124410.png" alt="Market Assets DB" title="Market Assets DB" width="767" height="236" class="aligncenter size-full wp-image-596" srcset="https://www.setera.org/wp-content/uploads/2011/10/Screenshot-at-2011-10-29-124410.png 767w, https://www.setera.org/wp-content/uploads/2011/10/Screenshot-at-2011-10-29-124410-300x92.png 300w" sizes="(max-width: 767px) 100vw, 767px" /></a></p>
+<p>Relinking applications is a matter of properly updating this table.  The prerequisites for this process are:</p>
+<ul>
+<li>Rooted device</li>
+<li>Android Debug Tools (adb) installed and working</li>
+</ul>
+<h2>Relinking Process</h2>
+<p>Start by making sure that Market application has been stopped:</p>
+<ol>
+<li>Navigate to Settings -> Applications -> Manage Applications</li>
+<li>Locate and select the Market application in the list</li>
+<li>Press the <i>Force Stop</i> button</li>
+</ol>
+<p>Make sure that your device is attached with USB Debugging enabled:</p>
+<pre name="code" class="shell">
+$ -> adb devices
+List of devices attached 
+3231174E43AA00EC	device
+</pre>
+<p>Open a shell on the device and navigate to the database directory:</p>
+<pre name="code" class="shell">
+$ -> adb shell
+# cd /data/data/com.android.vending/databases
+# ls -l
+-rw-rw----    1 app_57   app_57       34816 Oct 29 11:55 market_assets.db
+</pre>
+<p>Backup the current file:</p>
+<pre name="code" class="shell">
+# cp market_assets.db market_assets.db.save
+# ls -l
+-rw-rw----    1 app_57   app_57       34816 Oct 29 11:55 market_assets.db
+-rw-rw----    1 root     root         31744 Oct 29 11:44 market_assets.db.save
+</pre>
+<p>Update the database file:</p>
+<pre name="code" class="shell">
+# sqlite3 market_asset.db
+sqlite> update ASSETS set ACCOUNT = 'new.email@gmail.com' 
+   ...> where ACCOUNT = 'old.email@gmail.com';
+sqlite> .exit
+# exit
+</pre>
+<p>At this point, reboot your phone.  If all went correctly, your free applications should now be associated with <i>new.email@gmail.com</i>.</p>
+<h2>Updating Paid Applications</h2>
+<p>As I mentioned earlier, this process can&#8217;t be used to relink paid applications due to DRM that is tied to your account.  If you want to do this, most application developers will offer a refund if you purchase on a new account and send them the order details for both the old and new accounts.  Once you&#8217;ve purchased on the new account, you can uninstall for the old account and reinstall from the new.  This is a lot of effort, but can help if you need to switch market accounts.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Oops I Did It Again…
+   </title>
+   <link/>
+   https://www.setera.org/2011/10/29/oops-i-did-it-again/
+   <pubdate>
+    Sat, 29 Oct 2011 19:29:22 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Miscellaneous]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=617
+   </guid>
+   <description>
+    <![CDATA[One of these days I may actually learn my lesson when it comes to installing new software. Lately I&#8217;ve been busy with work and recovering from some surgery, so I haven&#8217;t really had the energy to focus on any of my personal programming projects. Instead, I&#8217;ve been doing a lot of home network administration and [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>One of these days I may actually learn my lesson when it comes to installing new software.  Lately I&#8217;ve been busy with work and recovering from some surgery, so I haven&#8217;t really had the energy to focus on any of my personal programming projects.  Instead, I&#8217;ve been doing a lot of home network administration and software updates.  In a multiple cases, I&#8217;m reminded of why being on the leading (bleeding?) edge of software may not always be the easiest place to be.<br />
+<span id="more-617"></span></p>
+<h2>Ubuntu 11.10</h2>
+<p>I have long used a dual-interface Linux machine at the edge of my network to provide firewall, file server and other interesting services to the network.  My old machine was getting pretty noisy and I was sure something was going to die and leave me in a bad situation.  I bought a cheap new HP tower machine to replace the old machine and was tripped up on multiple things:</p>
+<ul>
+<li>I didn&#8217;t think about the fact that my old network card would no longer fit in the machine due to bus changes.  I was further surprised to find out that it was impossible to find a PCIExpress networking card without going online and waiting for delivery.</li>
+<li>The latest Ubuntu installer guessed that the HP machine was using UEFI for bootloading and failed to boot Ubuntu.  With lots of great help from the Ubuntu forums I was able to diagnose the issue and get grub-pc installed and the machine working.</li>
+</ul>
+<p>This machine is up and running pretty well now after the false starts.  I wish I could say the same for my Dell laptop.  Every time a new version of Ubuntu comes out, I tell myself I&#8217;m not going to update for <b>at least</b> a month and that I should really wait a bit longer for the issues to shake out.  Every time, I lose the battle to wait and end up regretting it after the fact.  While Ubuntu 11.10 has some pretty nice new features, I ran up against new regressions that I had to work through.</p>
+<ul>
+<li><a href="https://bugs.launchpad.net/ubuntu/+source/linux/+bug/872652">Screen backlight issue</a></li>
+<li><a href="https://bugs.launchpad.net/ubuntu/+source/linux-restricted-modules/+bug/314574">Wireless connection issue</a></li>
+</ul>
+<p>Thanks to Canonical engineer Kamal Mostafa, I have a patched kernel to fix the backlight issue.  Unfortunately, I&#8217;m still struggling with the wireless issue that kills my wireless router from time to time.</p>
+<h2>Cyanogen Mod 7.1</h2>
+<p>I was excited to see <a href="http://www.cyanogenmod.com">Cyanogen Mod 7.1</a> come out with support for my Samsung Captivate.  I&#8217;m a fan of Android, but not a big fan of the crap-tacular software loaded on AT&#038;T devices by default.  The idea of installing a new ROM that was cleaner and faster was enticing.  While the transition has been relatively smooth, I&#8217;m seeing some strange behavior with my external 32G SD card.  I&#8217;m also having a hard time figuring out if the battery life is as good as it had been on the stock firmware.  I need to do more digging to figure that out.</p>
+<p>In the end, I don&#8217;t expect my habit of installing new software will likely change very soon.  I usually try to avoid upgrading too early for mission critical hardware such as my work laptop.  Admittedly half of the fun of installing new software is that you can <b>usually</b> dig yourself out of a hole if something goes wrong.</p>
+]]>
+   </content:encoded>
+  </item>
+ </channel>
+</rss>

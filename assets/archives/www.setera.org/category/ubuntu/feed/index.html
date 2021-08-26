@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:wfw="http://wellformedweb.org/CommentAPI/">
+ <channel>
+  <title>
+   Ubuntu – Et-Setera
+  </title>
+  <atom:link href="https://www.setera.org/category/ubuntu/feed/" rel="self" type="application/rss+xml">
+  </atom:link>
+  <link/>
+  https://www.setera.org
+  <description>
+   Ramblings of a geek
+  </description>
+  <lastbuilddate>
+   Fri, 15 Nov 2013 00:56:48 +0000
+  </lastbuilddate>
+  <language>
+   en-US
+  </language>
+  <sy:updateperiod>
+   hourly
+  </sy:updateperiod>
+  <sy:updatefrequency>
+   1
+  </sy:updatefrequency>
+  <generator>
+   https://wordpress.org/?v=4.5.24
+  </generator>
+  <item>
+   <title>
+    Ubuntu 12.10 Screen Brightness on Sony VAIO T15
+   </title>
+   <link/>
+   https://www.setera.org/2013/03/03/ubuntu-12-10-screen-brightness-on-sony-vaio-t15/
+   <pubdate>
+    Mon, 04 Mar 2013 01:44:00 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Ubuntu]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=691
+   </guid>
+   <description>
+    <![CDATA[I recently picked up a new Sony VAIO T15 ultrabook laptop. A really nicely designed laptop for a good price. After repartitioning, I was able to install Ubuntu 12.10 in a dual-boot arrangement fairly easily and Ubuntu worked well out of the box. However, screen brightness controls using Gnome power manager did not work out [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>I recently picked up a new Sony VAIO T15 ultrabook laptop. A really nicely designed laptop for a good price. After repartitioning, I was able to install Ubuntu 12.10 in a dual-boot arrangement fairly easily and Ubuntu worked well out of the box. However, screen brightness controls using Gnome power manager did not work out of the box and I had to to some hacking to get at least a bit of control.<br />
+<span id="more-691"></span></p>
+<h2>Background</h2>
+<p>Normally, the backlight brightness is controlled via the /sys/class/backlight/acpi_video0 ACPI interface. However, the Intel video driver installs its controls as /sys/class/backlight/intel_backlight. This mismatch causes Gnome power management to fail to operate on this laptop.</p>
+<h2>Short-term Solution</h2>
+<p>While there are a number of different potential solutions on the internet, I was unable to get any of those to work as-is. The closest I came was with the solution list <a href="http://ubuntuforums.org/showthread.php?t=2033273&amp;page=2">here</a>. However, the keyboard shortcuts didn&#8217;t seem to work. Using those scripts, I was able to roll my own solution.</p>
+<h3>Scripts</h3>
+<p>Based on the solution listed above, I created two script files.</p>
+<p><b>~/bin/brightdown.sh</b><br />
+<code><br />
+#!/bin/bash</code></p>
+<p>curr=`cat /sys/class/backlight/intel_backlight/actual_brightness`<br />
+if [ $curr -gt 0 ]; then<br />
+curr=$((curr-610));<br />
+echo $curr &gt; /sys/class/backlight/intel_backlight/brightness;<br />
+fi</p>
+<p><b>~/bin/brightdown.sh</b><br />
+<code><br />
+#!/bin/bash</code></p>
+<p>curr=`cat /sys/class/backlight/intel_backlight/actual_brightness`<br />
+if [ $curr -lt 4882 ]; then<br />
+curr=$((curr+610));<br />
+echo $curr &gt; /sys/class/backlight/intel_backlight/brightness;<br />
+fi</p>
+<p>Note that I placed these scripts in my personal <b>bin</b> folder rather than /etc/acpi. Each of the scripts must also be made executable.</p>
+<h3>Root Access When Necessary</h3>
+<p>Writing to the ACPI interface in the <code>/sys</code> folder requires root access. In order to avoid having to use <code>su</code> or <code>sudo</code> with a password in order to invoke these commands, the sudoers file can be configured to allow root execution without password for <i>just these commands</i>.</p>
+<p>Using the <code>visudo</code> command, alter the sudo file as follows:</p>
+<p><code><br />
+username ALL=NOPASSWD: /home/username/bin/brightdown.sh<br />
+username ALL=NOPASSWD: /home/username/bin/brightup.sh<br />
+</code></p>
+<p>where <i>username</i> is the name of the user to be given root access without a password to those commands.</p>
+<h3>Keyboard Shortcuts</h3>
+<p>As I was unable to get the standard keyboard shortcuts to work correctly with any of the suggested, I chose instead to create my own keyboard shortcuts. After installing, <a href="https://code.google.com/p/autokey/wiki/Overview">autokey</a>, I was able to create my own shortcuts for decreasing and increasing the brightness using the above scripts. In my case, I chose Ctrl+Shift+- to decrease the brightness and Ctrl+Shift++ to increase the brightness.</p>
+<p>Using the autokey application, choose <i>New -&gt; Script</i>. Enter the name &#8220;Brightness Down&#8221;. Enter the command:</p>
+<p><code>system.exec_command("sudo /home/username/bin/brightdown.sh")</code></p>
+<p>and set the Hotkey to Ctrl+Shift+-.</p>
+<div id="attachment_696" style="width: 755px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2013/03/brightdown.png"><img class="size-full wp-image-696" alt="Decrease Brightness" src="https://www.setera.org/wp-content/uploads/2013/03/brightdown.png" width="745" height="639" srcset="https://www.setera.org/wp-content/uploads/2013/03/brightdown.png 745w, https://www.setera.org/wp-content/uploads/2013/03/brightdown-300x257.png 300w" sizes="(max-width: 745px) 100vw, 745px" /></a><p class="wp-caption-text">Autokey set up to decrease brightness</p></div>
+<p>Do the same for increase the brightness, using the other script file.</p>
+<h2>Longer Term Solution</h2>
+<p>There is some hope according to <a href="https://bugs.launchpad.net/ubuntu/+source/linux/+bug/954661">Ubuntu Bug 954661</a> that this problem will be fixed via a kernel fix in the upcoming 13.04 Ubuntu release.  If that happens, I will be able to remove these simple workaround.  For the short-term though this works reasonably well.  The primary missing feature is auto-dimming the screen for power savings.</p>
+]]>
+   </content:encoded>
+  </item>
+ </channel>
+</rss>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:wfw="http://wellformedweb.org/CommentAPI/">
+ <channel>
+  <title>
+   Clock – Et-Setera
+  </title>
+  <atom:link href="https://www.setera.org/category/clock/feed/" rel="self" type="application/rss+xml">
+  </atom:link>
+  <link/>
+  https://www.setera.org
+  <description>
+   Ramblings of a geek
+  </description>
+  <lastbuilddate>
+   Fri, 15 Nov 2013 00:56:48 +0000
+  </lastbuilddate>
+  <language>
+   en-US
+  </language>
+  <sy:updateperiod>
+   hourly
+  </sy:updateperiod>
+  <sy:updatefrequency>
+   1
+  </sy:updatefrequency>
+  <generator>
+   https://wordpress.org/?v=4.5.24
+  </generator>
+  <item>
+   <title>
+    Still Deadlocked
+   </title>
+   <link/>
+   https://www.setera.org/2012/03/11/still-deadlocked/
+   <pubdate>
+    Sun, 11 Mar 2012 21:19:16 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Clock]]>
+   </category>
+   <category>
+    <![CDATA[Java]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=649
+   </guid>
+   <description>
+    <![CDATA[Wow&#8230; three months since my last post about my Android Clock Widget Project. While I&#8217;ve failed to bring stability to the clock selector during that time, I have figured out that the problem is not actually due to a deadlock. Instead, it appears that my project is tickling a bug in the Dalvik VM&#8217;s garbage [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Wow&#8230; three months since my <a href="https://www.setera.org/2011/12/27/deadlocked/">last post</a> about my <a href="https://www.setera.org/2011/09/04/clock-widget-project/">Android Clock Widget Project</a>.  While I&#8217;ve failed to bring stability to the clock selector during that time, I have figured out that the problem is not actually due to a deadlock.  Instead, it appears that my project is tickling a bug in the Dalvik VM&#8217;s garbage collector.  </p>
+<p><span id="more-649"></span><br />
+Depending on the device and operating system level, there are subtle changes in behavior.  In most cases, there is a crash log written to the /data/tombstones folder.  The most revealing tombstone file has come from a Samsung Captivate running a version of the <a href="http://forum.aokp.co/">AOKP ICS ROM</a>.</p>
+<pre name="code" class="shell">
+Build fingerprint: 'samsung/SGH-I897/SGH-I897:2.3.5/GINGERBREAD/UCKK4:user/release-keys'
+pid: 1758, tid: 1777  >>> com.seterasoft.mclock <<<
+signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr deadbaad
+ r0 deadbaad  r1 00000001  r2 40000000  r3 00000000
+ r4 00000000  r5 00000027  r6 50c53b40  r7 00000064
+ r8 41338018  r9 00000024  10 50c53a6c  fp 50c53ab0
+ ip ffffffff  sp 50c53a30  lr 400fdf79  pc 400fa694  cpsr 60000030
+ d0  0000000000000000  d1  0000000000000000
+ d2  0000000000000000  d3  0000000000000000
+ d4  0000000000000000  d5  0000000000000000
+ d6  0000000000000000  d7  0000000000000000
+ d8  0000000000000000  d9  0000000000000000
+ d10 0000000000000000  d11 0000000000000000
+ d12 0000000000000000  d13 0000000000000000
+ d14 0000000000000000  d15 0000000000000000
+ d16 0000000000000000  d17 0000000000000000
+ d18 0000000000000000  d19 0000000000000000
+ d20 0000000000000000  d21 0000000000000000
+ d22 0000000000000000  d23 0000000000000000
+ d24 0000000000000000  d25 0000000000000000
+ d26 0000000000000000  d27 0000000000000000
+ d28 0100010001000100  d29 0100010001000100
+ d30 0000000000000000  d31 3ff0000000000000
+ scr 2800001b
+
+         #00  pc 00017694  /system/lib/libc.so
+         #01  pc 00007bb0  /system/lib/libcutils.so (mspace_merge_objects)
+         #02  pc 0007b6c8  /system/lib/libdvm.so (_Z21dvmHeapSourceFreeListjPPv)
+         #03  pc 00042ce0  /system/lib/libdvm.so
+         #04  pc 00032f94  /system/lib/libdvm.so (_Z22dvmHeapBitmapSweepWalkPK10HeapBitmapS1_jjPFvjPPvS2_ES2_)
+         #05  pc 00042c9c  /system/lib/libdvm.so (_Z27dvmHeapSweepUnmarkedObjectsbbPjS_)
+         #06  pc 000337c0  /system/lib/libdvm.so (_Z25dvmCollectGarbageInternalPK6GcSpec)
+         #07  pc 0005ff6c  /system/lib/libdvm.so (_Z17dvmCollectGarbagev)
+         #08  pc 00072a8e  /system/lib/libdvm.so
+         #09  pc 00030a8c  /system/lib/libdvm.so
+         #10  pc 00034248  /system/lib/libdvm.so (_Z12dvmInterpretP6ThreadPK6MethodP6JValue)
+         #11  pc 0006c692  /system/lib/libdvm.so (_Z14dvmCallMethodVP6ThreadPK6MethodP6ObjectbP6JValueSt9__va_list)
+         #12  pc 0006c6b4  /system/lib/libdvm.so (_Z13dvmCallMethodP6ThreadPK6MethodP6ObjectP6JValuez)
+         #13  pc 0005f7c0  /system/lib/libdvm.so
+         #14  pc 00012c14  /system/lib/libc.so (__thread_entry)
+         #15  pc 00012744  /system/lib/libc.so (pthread_create)
+</pre>
+<p>The failing function appears to be implemented in dlmalloc.c in the Android source, but I really don't have any good idea about what might be causing the crash.  I also don't appear to be the only one, as there are <a href="http://groups.google.com/a/googleproductforums.com/forum/#!category-topic/maps/google-maps-for-mobile/XVVmMYYxLUI">other references on the web</a> that look similar.</p>
+<p>To this point, I've tried a variety of things to try to track down the problem.  I've gone so far as to try to build my own version of the <a href="http://www.cyanogenmod.com/">Cyanogenmod</a> with the idea that I might be able to add more logging output.  So far, I've not had any luck with this approach.  I generally have no problem walking away from hobby projects when I lose interest.  However, this has turned into a competition of me versus the computer and I'm not quite ready to give up.</p>
+]]>
+   </content:encoded>
+  </item>
+  <item>
+   <title>
+    Clock Widget Project
+   </title>
+   <link/>
+   https://www.setera.org/2011/09/04/clock-widget-project/
+   <pubdate>
+    Sun, 04 Sep 2011 23:55:11 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[AndEngine]]>
+   </category>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Clock]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=562
+   </guid>
+   <description>
+    <![CDATA[In my last post about inertia I mentioned that I had started to take a look at Android App Widgets. I&#8217;ve long had the idea that it would be interesting to create a widget capable of consuming themes for MacSlow&#8217;s Cairo Clock project. This very cool analog clock uses a set of SVG graphics to [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>In my last post about <a href="https://www.setera.org/2011/07/30/inertia/">inertia</a> I mentioned that I had started to take a look at Android App Widgets.  I&#8217;ve long had the idea that it would be interesting to create a widget capable of consuming themes for <a href="http://macslow.net/?page_id=23">MacSlow&#8217;s Cairo Clock</a> project.  This very cool analog clock uses a set of SVG graphics to theme the clock in such a way that it can be scaled to various sizes.  While I&#8217;m not there quite yet, the ultimate goal is that the widget is capable of rendering all of the themes found at <a href="http://gnome-look.org/index.php?xcontentmode=186">gnome-look.org</a>.<br />
+<span id="more-562"></span></p>
+<p>This screen capture from the emulator shows multiple live instances of the widget running simultaneously with many different themes.  I would not suggest that anyone actually do this do the amount of memory required, however it shows the power of the themes.</p>
+<div id="attachment_566" style="width: 388px" class="wp-caption aligncenter"><a href="https://www.setera.org/wp-content/uploads/2011/09/Screenshot.png"><img src="https://www.setera.org/wp-content/uploads/2011/09/Screenshot.png" alt="" title="Clock Themes" width="378" height="552" class="size-full wp-image-566" srcset="https://www.setera.org/wp-content/uploads/2011/09/Screenshot.png 378w, https://www.setera.org/wp-content/uploads/2011/09/Screenshot-205x300.png 205w" sizes="(max-width: 378px) 100vw, 378px" /></a><p class="wp-caption-text">Android analog clock displaying many themes simultaneously.</p></div>
+<h2>Implementation Notes</h2>
+<p>Getting to this point has been an interesting process, as the Android widget support definitely makes this type of widget somewhat difficult to build.</p>
+<h3>AndEngine SVG Support</h3>
+<p>I&#8217;ve had this idea for quite some time.  What helped me move forward was the addition of <a href="http://www.andengine.org/blog/category/andenginesvgtextureregionextension/">SVG support to AndEngine.</a>  Thanks to Nicolas Gramlich yet again for his excellent engine.  I&#8217;ve found a few glitches along the way that I&#8217;ve started to submit patches to the project to correct, but as always his code works amazingly well.</p>
+<h3>Per-Minute Updates</h3>
+<p>As I mentioned in <a href="https://www.setera.org/2011/07/30/inertia/">my inertia post</a>, the standard Android widgets model is really more of a &#8220;pull&#8221; model versus a &#8220;push&#8221; model.  The widget provider definition file (in XML) specifies the frequency that the Android framework will call the widget&#8217;s update functionality:</p>
+<pre name="code" class="xml">
+    android:updatePeriodMillis="1800000"
+</pre>
+<p>However, no matter what is specified for this value, Android limits the update frequency to no more than once every 30 minutes to avoid the battery drain associated with executing code too often.  Thus, it is necessary to push changes to the widget based on our own schedule to make sure the clock is updated every minute.</p>
+<p>My initial implementation used Java&#8217;s Timer and TimerTask to do these updates.  Looking at the framework&#8217;s analog clock implementation, I discovered Android&#8217;s time-related broadcast messages:</p>
+<ul>
+<li><a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_TIME_TICK">Intent.ACTION_TIME_TICK</a></li>
+<li><a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_TIME_CHANGED">Intent.ACTION_TIME_CHANGED</a></li>
+<li><a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_TIMEZONE_CHANGED">Intent.ACTION_TIMEZONE_CHANGED</a></li>
+</ul>
+<p>Using these broadcast messages is a vast improvement over maintaining my own timer threads for this functionality.  However, since a widget is nothing more than a fancy broadcast receiver, it is necessary to spin up a separate service to register a broadcast receiver for these messages.  On reception of one of these messages, each clock instance is updated to match the current time.  This update generates a properly sized bitmap that is pushed to the widget instance:</p>
+<pre name="code" class="java">
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main);
+		views.setImageViewBitmap(R.id.imageview, bitmap);
+		appWidgetManager.updateAppWidget(instanceIdentifier, views);
+</pre>
+<p>It&#8217;s important to note that there is also an <i>updateAppWidget</i> method call that accepts an instance of <i>android.content.ComponentName</i>.  Using this method will update all instances for the specified provider with the bitmap.  It took a bit to figure out why all of my clock instances were showing the same theme until I realized it was due to using the wrong method.</p>
+<h3>Improving Battery Performance</h3>
+<p>Given that this widget is controlling updates rather than allowing the framework to do the job, my primary concern is in terms of performance.  Android devices are notorious for poor battery life, however it does seem that it is primarily due to background applications.  I&#8217;ve done a couple of things thus far to attempt to minimize battery usage.</p>
+<h4>No Seconds Hand</h4>
+<p>At least at the moment, the widget removes the seconds hand to avoid pushing more updates to the screen than necessary.  Assuming that Android wants to limit updates to once every 30 minutes, the widget is already pushing updates 30 times more often than the framework would like.  Multiplying that yet again by 60 seconds seems like a bit too much.  In the future, I may consider allowing the user to enable the seconds hands with proper warnings attached.</p>
+<h4>Manage Broadcast Receiver Messages</h4>
+<p>An unfortunate side effect of the way that widgets work is that it does not appear to be possible for a widget to determine if it is actually being displayed.  If a widget is placed on screen 1, but the user is currently viewing screen 2, there is really no reason to update the widget.  With that said, the implementation can still be smart about updates.  The service alters the messages it listens for based on the status of the screen:</p>
+<ul>
+<li>Screen Off</li>
+<ul>
+<li><a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_USER_PRESENT">Intent.ACTION_USER_PRESENT</a></li>
+</ul>
+<li>Screen On</li>
+<ul>
+<li><a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_SCREEN_OFF">Intent.ACTION_SCREEN_OFF</a></li>
+<li><a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_TIME_TICK">Intent.ACTION_TIME_TICK</a></li>
+<li><a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_TIME_CHANGED">Intent.ACTION_TIME_CHANGED</a></li>
+<li><a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_TIMEZONE_CHANGED">Intent.ACTION_TIMEZONE_CHANGED</a></li>
+</ul>
+</ul>
+<p>After the user has cleared the lock screen (ACTION_USER_PRESENT), the widget registers to hear time updates as well as the screen turning off.  Once the screen turns off, the widget stops listening for time updates and switches to listening for user presence.  This lowers the update frequency for the widgets when there is no chance that they will actually be visible to the user.</p>
+<h2>What&#8217;s Next?</h2>
+<p>This project has a chance of being something that I can complete and that others might be interested in actually <i>using</i>.  I&#8217;m considering whether I want to submit this to the Android Market when it is a bit further along.  If I do, I will have to decide whether or not I would charge for it which implies a certain level of required support.  Either way, I&#8217;m not at the point of releasing any significant amount of source code until I decide what to do with this project.</p>
+]]>
+   </content:encoded>
+  </item>
+ </channel>
+</rss>

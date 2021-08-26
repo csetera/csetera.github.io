@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:wfw="http://wellformedweb.org/CommentAPI/">
+ <channel>
+  <title>
+   Appcelerator Titanium – Et-Setera
+  </title>
+  <atom:link href="https://www.setera.org/category/appcelerator-titanium/feed/" rel="self" type="application/rss+xml">
+  </atom:link>
+  <link/>
+  https://www.setera.org
+  <description>
+   Ramblings of a geek
+  </description>
+  <lastbuilddate>
+   Fri, 15 Nov 2013 00:56:48 +0000
+  </lastbuilddate>
+  <language>
+   en-US
+  </language>
+  <sy:updateperiod>
+   hourly
+  </sy:updateperiod>
+  <sy:updatefrequency>
+   1
+  </sy:updatefrequency>
+  <generator>
+   https://wordpress.org/?v=4.5.24
+  </generator>
+  <item>
+   <title>
+    Debugging Titanium Android Native Modules
+   </title>
+   <link/>
+   https://www.setera.org/2013/08/08/debugging-titanium-android-native-modules/
+   <pubdate>
+    Thu, 08 Aug 2013 11:24:04 +0000
+   </pubdate>
+   <dc:creator>
+    <![CDATA[Craig Setera]]>
+   </dc:creator>
+   <category>
+    <![CDATA[Android]]>
+   </category>
+   <category>
+    <![CDATA[Appcelerator Titanium]]>
+   </category>
+   <guid ispermalink="false">
+    https://www.setera.org/?p=710
+   </guid>
+   <description>
+    <![CDATA[Recently, I&#8217;ve been playing a bit with the Appcelerator Titanium Platform. In particular, I&#8217;ve been working on a native Android module for Titanium. In their documentation, they state: The best way to debug your Android modules right now is a bit old fashioned. When there is a problem or unexpected behavior in your module, use [&#8230;]]]>
+   </description>
+   <content:encoded>
+    <![CDATA[<p>Recently, I&#8217;ve been playing a bit with the <a href="http://www.appcelerator.com/platform/titanium-platform/">Appcelerator Titanium Platform</a>.  In particular, I&#8217;ve been working on a <a href="http://docs.appcelerator.com/titanium/3.0/#!/guide/Android_Module_Development_Guide">native Android module for Titanium</a>.  In their documentation, <a href="http://docs.appcelerator.com/titanium/3.0/#!/guide/Android_Module_Development_Guide-section-29004945_AndroidModuleDevelopmentGuide-Debugging">they state</a>:</p>
+<blockquote><p>The best way to debug your Android modules right now is a bit old fashioned. When there is a problem or unexpected behavior in your module, use log statements to trace through your code&#8217;s execution.
+</p></blockquote>
+<p><span id="more-710"></span><br />
+However, the functionality I was working on was complicated enough that I needed the comfort of Eclipse step-debugging to truly feel like I was able to see what was going on inside my code.  With that in mind, I dug around and figured out a way to debug these native modules and discovered some cool functionality in the <a href="http://developer.android.com/tools/help/adb.html">Android Debug Bridge (adb)</a> that I was previously unaware of.</p>
+<h2>Native Module Creation</h2>
+<p>The module creation and implementation steps are no different than the standard steps <a href="http://docs.appcelerator.com/titanium/3.0/#!/guide/Android_Module_Development_Guide-section-29004945_AndroidModuleDevelopmentGuide-CreatinganAndroidModule">documented by Appcelerator</a>.  Once that is complete and it is time to do some debugging, I found the following to work to allow for step-wise debugging of the module.  (NOTE: This has only been attempted on-device, although I expect it should work on top of the Android emulator).</p>
+<h2>Setting Up Module Debugging</h2>
+<p>After making testable changes, execute the &#8220;install&#8221; target of the build.xml file for your module to get the module properly <a href="http://docs.appcelerator.com/titanium/3.0/#!/guide/Android_Module_Development_Guide-section-29004945_AndroidModuleDevelopmentGuide-Running">installed on the device</a>.  At this point, it is necessary to enable debugging of your module&#8217;s example application if it has not already been handled via the Android manifest file.  The basic command looks like:</p>
+<blockquote><p>adb shell am set-debug-app -w &#8211;persistent my.package.name</p></blockquote>
+<p>Where the two options can be used dependent on your needs:</p>
+<ul>
+<li>-w<br />Wait for debugger at start.  Use this if you need to debug something that starts early in the module&#8217;s startup routines</li>
+<li>&#8211;persistent<br />Remember that this application should be debuggable across reinstalls.</li>
+</ul>
+<p>With a debuggable application, it is actually possible to use the application&#8217;s process identifier to connect up a local port to the application&#8217;s JDWP agent.  For instance, if you look at the output of &#8220;ps&#8221; from the shell, you will see something like the following:</p>
+<blockquote><p>USER     PID   PPID  VSIZE  RSS     WCHAN    PC         NAME<br />
+&#8230;..<br />
+u0_a48    1471  795   215984 29516 ffffffff b7e62157 S com.seterasoft.sync.scheduler<br />
+&#8230;..
+</p></blockquote>
+<p>With this knowledge, adb can be used to forward host traffic from TCP port 9999 to the JDWP agent for this particular process using this command:</p>
+<blockquote><p>adb forward tcp:9999 jdwp:1471</p></blockquote>
+<p>Given my infinite laziness, I prefer to do this linkage with a script to avoid manual steps as much as possible.  Thus, I created this simple Groovy script to query for &#8220;my.package.name&#8221; and link it to local TCP port 9999.  </p>
+<pre name="code" class="java">
+#!/usr/bin/env groovy
+
+def ps = "adb shell ps".execute().text
+def reader = new StringReader(ps)
+
+def found = false
+reader.eachLine { line ->
+    if (line =~ /my\.package\.name/) {
+    	found = true
+        def pid = line.split()[1]
+        println "Forwarding tcp:9999 => jdwp:${pid}"
+        println "adb forward tcp:9999 jdwp:${pid}".execute().text
+    }
+}
+
+if (!found) {
+	println "Did not find application process.  Is it running?"
+}
+</pre>
+<p>It is important to understand that this linkage must be re-established each time that the application is rebuilt and/or redeployed.  This will result in a new process being started and a new ADB forward must then be configured.</p>
+<h2>Debug with Eclipse Remote Debugger</h2>
+<p>With debugging enabled for the application and a JDWP forwarding set up via ADB, it is just a matter of using the standard Eclipse remote debugging configuration.  Assuming the previously documented forwarding set up, Eclipse remote debugging can be configured to debug via local port 9999 and ADB will proxy those requests to the running (or waiting) application.</p>
+<p><a href="https://www.setera.org/wp-content/uploads/2013/08/Screen-Shot-2013-08-06-at-2.46.49-PM.png"><img src="https://www.setera.org/wp-content/uploads/2013/08/Screen-Shot-2013-08-06-at-2.46.49-PM.png" alt="Screen Shot 2013-08-06 at 2.46.49 PM" width="465" height="237" class="aligncenter size-full wp-image-712" srcset="https://www.setera.org/wp-content/uploads/2013/08/Screen-Shot-2013-08-06-at-2.46.49-PM.png 465w, https://www.setera.org/wp-content/uploads/2013/08/Screen-Shot-2013-08-06-at-2.46.49-PM-300x152.png 300w" sizes="(max-width: 465px) 100vw, 465px" /></a></p>
+<p>While this requires a bit more setup than some standard debugging and only works for Android, I&#8217;ve still found it well worth the time and effort while working on native modules for Android in Titanium.</p>
+]]>
+   </content:encoded>
+  </item>
+ </channel>
+</rss>

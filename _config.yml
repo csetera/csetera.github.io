@@ -46,6 +46,19 @@ social_media:
   # vk: your_username
   # website: http://your_website_url
 
+historical:
+  - name: Compute Magazine Article (1984)
+    web_url: https://archive.org/details/1984-02-compute-magazine/page/n63/mode/2up
+    image_url: /assets/images/compute.png
+
+  - name: setera.org (Archive)
+    web_url: /assets/archives/www.setera.org/
+    image_url: /assets/images/setera.org.png
+
+  - name: eclipseme.org (Archive)
+    web_url: /assets/archives/www.setera.org/eclipsemeorg/
+    image_url: /assets/images/eclipseme.org.png
+
 topics:
   - name: 3D Printing
     web_url: https://en.wikipedia.org/wiki/3D_printing
@@ -67,8 +80,9 @@ topics:
     web_url: https://en.wikipedia.org/wiki/ESP8266
     image_url: https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/ESP-01.jpg/440px-ESP-01.jpg
 
-  - name: Front End Development
-    web_url: https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/electron/electron.png
+  # - name: Front End Development
+  #   web_url: https://github.com/topics/frontend
+  #   image_url: /assets/images/web-tech-employed.jpg
 
   - name: Java
     web_url: https://github.com/topics/java
@@ -80,7 +94,8 @@ topics:
 
   - name: REST APIs
     web_url: https://github.com/topics/rest-api
-  
+    image_url: https://upload.wikimedia.org/wikipedia/commons/9/92/Cog_font_awesome.svg
+
   - name: Spring Boot
     web_url: https://github.com/topics/spring-boot
     image_url: https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/spring-boot/spring-boot.png
@@ -99,3 +114,4 @@ topics:
 
   - name: Web Applications
     web_url: https://github.com/topics/webapp
+    image_url: /assets/images/web-tech-employed.jpg

@@ -1,0 +1,834 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <!-- Mirrored from www.setera.org/eclipsemeorg/2008/10/19/converting-from-eclipseme-to-mobile-tools-for-java/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 09 Aug 2021 00:44:04 GMT -->
+ <head>
+  <title>
+   EclipseME Home Page
+  </title>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+  <meta content="WordPress 2.6.5" name="generator"/>
+  <!-- leave this for stats -->
+  <link href="../../../../wp-content/themes/eclipseme/style.css" media="screen" rel="stylesheet" type="text/css"/>
+  <!--
+	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://eclipseme.org/blog/feed/" />
+	<link rel="alternate" type="text/xml" title="RSS .92" href="http://eclipseme.org/blog/feed/rss/" />
+	<link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="http://eclipseme.org/blog/feed/atom/" />
+	<link rel="pingback" href="http://eclipseme.org/blog/xmlrpc.php" />
+-->
+ </head>
+ <body>
+  <table border="0" cellpadding="0" cellspacing="0">
+   <tbody>
+    <tr style="height: 103px;">
+     <td colspan="2">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+       <tbody>
+        <tr>
+         <td style="width: 281px;">
+          <img alt="logoTop" src="../../../../wp-content/themes/eclipseme/images/logoTop.png"/>
+         </td>
+         <td background="../../../../wp-content/themes/eclipseme/images/bg.png" style="vertical-align: bottom; text-align: right; padding-bottom: 10px; padding-right: 10px;">
+          <img alt="pad" height="1" src="../../../../wp-content/themes/eclipseme/images/1p-trans.gif" width="400"/>
+          <br/>
+          <div class="PageHeader">
+           J2ME Development using Eclipse
+           <br/>
+           <span style="font-style: italic;">
+            "From
+zero to mobile in
+minutes"
+           </span>
+          </div>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </td>
+    </tr>
+    <tr>
+     <td style="width: 220px; vertical-align: top;">
+      <img alt="logoBottom" src="../../../../wp-content/themes/eclipseme/images/logoBot.png"/>
+      <div style="text-align: center;">
+       <table align="center" bgcolor="#cbcbcb" border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+         <tr>
+          <td>
+           <table align="center" border="0" cellpadding="1" cellspacing="1">
+            <tbody>
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://sourceforge.net/donate/index.php?group_id=86829" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                Donate!
+               </a>
+              </td>
+             </tr>
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://eclipseme.org/" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                Home
+               </a>
+              </td>
+             </tr>
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://eclipseme.org/License.html" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                License
+               </a>
+              </td>
+             </tr>
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://eclipseme.org/docs/prereqs.html" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                Prerequisites
+               </a>
+              </td>
+             </tr>
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://eclipseme.org/docs/news.html" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                News
+               </a>
+              </td>
+             </tr>
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://eclipseme.org/docs/installation.html" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                Installation
+               </a>
+              </td>
+             </tr>
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://eclipseme.org/docs/index.html" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                Documentation
+               </a>
+              </td>
+             </tr>
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://sourceforge.net/project/showfiles.php?group_id=86829" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                Downloads
+               </a>
+              </td>
+             </tr>
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://eclipseme.org/docs/support.html" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                Support
+               </a>
+              </td>
+             </tr>
+             <!--
+                <tr>
+                  <td bgcolor="#ebebeb"><a class="menu"
+ href="http://eclipseme.org/blog/feed/" onmouseover="parentNode.bgColor='#000000';"
+ onmouseout="parentNode.bgColor='#EBEBEB';">Subscribe (RSS)</a></td>
+                </tr>
+              -->
+             <tr>
+              <td bgcolor="#ebebeb">
+               <a class="menu" href="http://sourceforge.net/projects/eclipseme/" onmouseout="parentNode.bgColor='#EBEBEB';" onmouseover="parentNode.bgColor='#000000';">
+                Sourceforge
+Project Page
+               </a>
+              </td>
+             </tr>
+            </tbody>
+           </table>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <br/>
+       <script type="text/javascript">
+        <!--
+google_ad_client = "pub-6209547544666090";
+google_alternate_ad_url = "http://www.eclipseme.org/blank.html";
+google_ad_width = 120;
+google_ad_height = 240;
+google_ad_format = "120x240_as";
+google_ad_channel ="";
+google_color_border = "CCCCCC";
+google_color_bg = "FFFFFF";
+google_color_link = "000000";
+google_color_url = "666666.html";
+google_color_text = "333333";
+//-->
+       </script>
+       <br/>
+       <a href="http://www.eclipse.org/">
+        <img alt="Eclipse Ready Logo" border="0" src="../../../../wp-content/themes/eclipseme/images/rea_eclipse_pos_logo_fc_sm.gif"/>
+       </a>
+      </div>
+      <br/>
+     </td>
+     <td style="vertical-align: top;">
+      <!-- Begin Wordpress content -->
+      <div class="post">
+       <h1 class="storytitle" id="post-46">
+        Converting From EclipseME to Mobile Tools for Java
+       </h1>
+       <h3>
+        Craig Setera — October 19, 2008 @ 4:52 pm —
+        <a href="../../../../category/miscellaneous/index.html" rel="category tag" title="View all posts in Miscellaneous">
+         Miscellaneous
+        </a>
+       </h3>
+       <div class="storycontent">
+        <h2>
+         Converting to Eclipse Mobile Tools for Java
+        </h2>
+        <p>
+         <i>
+          <b>
+           UPDATED: It turns out that the original steps I documented for doing the conversion were incorrect.  This post has been updated to specify the use of the Eclipse Import wizard to import EclipseME projects as MTJ projects.
+          </b>
+         </i>
+        </p>
+        <p>
+         <i>
+          <b>
+           UPDATE 2: Added instructions for upgrading preprocessor hooks configuration.
+          </b>
+         </i>
+        </p>
+        <p>
+         Now that EclipseME forms the base for the new Mobile Tools for Java project, it is now time for EclipseME users to convert to using MTJ.  The conversion from EclipseME to the Eclipse Mobile Tools for Java project could not be any easier.  Given that Eclipse MTJ is based on the last release of EclipseME, it should be very comfortable for all EclipseME users.  The primary thing that may trip up EclipseME users are minor text changes throughout the tools.
+        </p>
+        <p>
+         There have been a number of questions about
+         <i>
+          <b>
+           why
+          </b>
+         </i>
+         people might want to make the switch over to MTJ.  My next post will cover some of the cool new features in MTJ versus the last release of EclipseME.  (Not to mention the many bug fixes that were made.)
+        </p>
+        <p>
+         <span id="more-46">
+         </span>
+        </p>
+        <p>
+         Making the switch to MTJ involves three primary steps:
+        </p>
+        <ol>
+         <li>
+          <a href="index.html#installmtj">
+           Install the Mobile Tools for Java Support
+          </a>
+         </li>
+         <li>
+          <a href="index.html#convert">
+           Convert EclipseME projects to Mobile Tools for Java projects
+          </a>
+         </li>
+         <li>
+          <a href="index.html#preprocessor">
+           Configure Preprocessor Hooks
+          </a>
+         </li>
+         <li>
+          <a href="index.html#uninstall">
+           Uninstall the EclipseME Support
+          </a>
+         </li>
+        </ol>
+        <h3 name="installmtj">
+         Install MTJ
+        </h3>
+        <p>
+         It is possible to install MTJ using an Eclipse Update Site or by downloading an installable archive file.  MTJ requires at least version 3.3 of Eclipse.  I would suggest that you move to Eclipse 3.4 for the best experience.  This examples shows the installation of MTJ into Eclipse 3.4 using the update site.
+        </p>
+        <p>
+         <img alt="install1" border="0" src="../../../../images/install1.html"/>
+        </p>
+        <ol>
+         <li>
+          Open the installation dialog via the
+          <i>
+           Software Updates…
+          </i>
+          menu item in the
+          <i>
+           Help
+          </i>
+          menu.
+         </li>
+         <li>
+          Switch to the
+          <i>
+           Available Software
+          </i>
+          tab of the dialog.
+         </li>
+         <li>
+          Press the
+          <i>
+           Add Site…
+          </i>
+          button
+         </li>
+         <li>
+          Enter the MTJ Update site URL:
+          <b>
+           <a href="http://download.eclipse.org/dsdp/mtj/updates/0.9/stable">
+            http://download.eclipse.org/dsdp/mtj/updates/0.9/stable
+           </a>
+          </b>
+          and press
+          <i>
+           OK
+          </i>
+         </li>
+        </ol>
+        <p>
+         <img alt="install2" border="0" src="../../../../images/install2.html"/>
+        </p>
+        <ol>
+         <li>
+          Expand the update site
+         </li>
+         <li>
+          Select the MTJ features of interest
+         </li>
+        </ol>
+        <p>
+         <img alt="install3" border="0" src="../../../../images/install3.html"/>
+        </p>
+        <p>
+         Follow the prompts through to complete the installation of the Eclipse Mobile Tools for Java
+         <br/>
+         project plugins.
+        </p>
+        <h4>
+         Import Devices into MTJ
+        </h4>
+        <p>
+         The devices in EclipseME will not be brought over automatically.  Import your devices into MTJ so that they are available when importing your your project into MTJ.
+        </p>
+        <p>
+         <img alt="new device import" border="0" src="../../../../images/newdeviceimport.html"/>
+        </p>
+        <h3 name="convert">
+         Convert EclipseME projects to Mobile Tools for Java projects
+        </h3>
+        <p>
+         The MTJ project provides the ability to convert an EclipseME project over to a Mobile Tools for Java project.  This functionality is implemented in the as an
+         <i>
+          Import
+         </i>
+         wizard, requiring a number of steps.  There are likely other ways to handle this import operation, but the following steps are relatively straightforward.
+        </p>
+        <h4 name="deleteeclipseme">
+         Delete the EclipseME Project
+        </h4>
+        <p>
+         In order to import the project as an MTJ project, it is necessary to delete the project from the current workspace.  The delete operation
+         <i>
+          <b>
+           must
+          </b>
+         </i>
+         be done carefully to avoid deleting the project from the file system.
+        </p>
+        <p>
+         <img alt="delete1" border="0" src="../../../../images/deleteproject.html"/>
+        </p>
+        <p>
+         When prompted, make sure that the
+         <i>
+          Delete project contents on disk
+         </i>
+         radio box is not selected to avoid accidentally deleting the actual project contents.  When this is done, the project is deleted from Eclipse, but not from the file system.
+        </p>
+        <p>
+         <img alt="delete2" border="0" src="../../../../images/delete2.html"/>
+        </p>
+        <h4 name="moveproject">
+         Move the EclipseME Project
+        </h4>
+        <p>
+         In order for the import wizard to find the EclipseME project for the conversion, it must not be located in the workspace folder on the file system.  Find the project in your local file system and move it to another location.
+        </p>
+        <h4 name="importasmtj">
+         Import As EclipseME Project
+        </h4>
+        <p>
+         Launch the Import wizard from the File menu.  When the wizard dialog is displayed, choose
+         <i>
+          EclipseME Project
+         </i>
+         from the
+         <i>
+          Java ME
+         </i>
+         category.
+        </p>
+        <p>
+         <img alt="import1" border="0" src="../../../../images/import1.html"/>
+        </p>
+        <p>
+         When prompted, specify the folder holding your EclipseME project file in the location that it was placed when moved.  The import wizard should find the EclipseME project and allow you to do the import.  Once finished, the project will be in your Eclipse workspace as an MTJ project.
+        </p>
+        <p>
+         <img alt="import2" border="0" src="../../../../images/import2.html"/>
+        </p>
+        <p>
+         <b>
+          <i>
+           IMPORTANT NOTE: The way in which keystore passwords are stored has changed in MTJ versus in EclipseME.  If your your project stores the keystore password within the project or workspace, you will need to re-enter your keystore password after the conversion has been completed.
+          </i>
+         </b>
+        </p>
+        <h3 name="preprocessor">
+         Configure Preprocessor Hooks
+        </h3>
+        <p>
+         If you are using the preprocessing support in EclipseME, you will need to update your installation to point to the MTJ preprocessor hooks library.  Full information on installing the preprocessor hooks for EclipseME can be found
+         <a href="http://www.eclipseme.org/docs/installEclipseME.html#step2d">
+          here.
+         </a>
+         .  To update your installation for MTJ, change from:
+        </p>
+        <p>
+         <code>
+          osgi.framework.extensions=eclipseme.core.hooks
+         </code>
+        </p>
+        <p>
+         to:
+        </p>
+        <p>
+         <code>
+          osgi.framework.extensions=org.eclipse.mtj.core.hooks
+         </code>
+        </p>
+        <h3 name="uninstall">
+         Uninstall EclipseME
+        </h3>
+        <p>
+         EclipseME and Mobile Tools for Java functionality overlap.  If both toolsets are installed, many menus will be replicated and there will be two two Java ME categories in the preferences dialog.  While not a requirement, removing EclipseME will make it easier to deal with the Mobile Tools for Java.
+        </p>
+       </div>
+       <div class="feedback">
+       </div>
+       <!--
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+				xmlns:dc="http://purl.org/dc/elements/1.1/"
+				xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+			<rdf:Description rdf:about="http://eclipseme.org/blog/2008/10/19/converting-from-eclipseme-to-mobile-tools-for-java/"
+    dc:identifier="http://eclipseme.org/blog/2008/10/19/converting-from-eclipseme-to-mobile-tools-for-java/"
+    dc:title="Converting From EclipseME to Mobile Tools for Java"
+    trackback:ping="http://eclipseme.org/blog/2008/10/19/converting-from-eclipseme-to-mobile-tools-for-java/trackback/" />
+</rdf:RDF>	-->
+      </div>
+      <!-- You can start editing here. -->
+      <h3 id="comments">
+       17 Responses to “Converting From EclipseME to Mobile Tools for Java”
+      </h3>
+      <ol class="commentlist">
+       <li class="alt" id="comment-2315">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         <a href="http://www.exerciseforthereader.org/" rel="external nofollow">
+          Alison Chaiken
+         </a>
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2315" title="">
+          October 21st, 2008 at 1:24 pm
+         </a>
+        </small>
+        <p>
+         I take it that there is not yet any documentation that is specific to MTJ, so we should continue to use the EclipseME docs?   (Please don’t take this genuine question as whining; I really appreciate free open source tools!)
+        </p>
+       </li>
+       <li id="comment-2329">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/c94d56e40f588a78f5fa6c58e65b3d9a2597.jpeg?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         María
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2329" title="">
+          October 31st, 2008 at 3:34 am
+         </a>
+        </small>
+        <p>
+         I just wanted to say thanks for the helpful tutorial, and also I’d suggest to include one more step. Before importing our EclipseME projects we must import the devices in Window -&gt; Preferences -&gt; Java ME -&gt; Device Management tab, which is empty after installing MTJ.
+        </p>
+       </li>
+       <li class="alt" id="comment-2330">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         Adalbert
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2330" title="">
+          November 2nd, 2008 at 3:25 pm
+         </a>
+        </small>
+        <p>
+         If you use preprocessor you must remember about changing in config.ini:
+         <br/>
+         #for preprocessor Support (http://eclipseme.org/docs/installEclipseME.html#step4)
+         <br/>
+         #for eclipseme osgi.framework.extensions=eclipseme.core.hooks
+         <br/>
+         osgi.framework.extensions=org.eclipse.mtj.core.hooks
+        </p>
+       </li>
+       <li id="comment-2331">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         Neil
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2331" title="">
+          November 5th, 2008 at 7:56 am
+         </a>
+        </small>
+        <p>
+         Hi Craig,
+         <br/>
+         until now I used your EclipseME together with Eclipse 3.2 and didn’t have the intention to change anything at all. Unfortunately I lost my installation (all .exes) due to W32/Virut.V, a deadly virus, so I have to reinstall my whole J2ME environment.
+        </p>
+        <p>
+         Because I don’t have that on top of my mind anymore: Is there any tutorial about how to start from scratch with Eclipse and MJT?
+        </p>
+        <p>
+         Kind regards
+        </p>
+       </li>
+       <li class="alt" id="comment-2332">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         Neil
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2332" title="">
+          November 5th, 2008 at 7:58 am
+         </a>
+        </small>
+        <p>
+         Hmm. Should have had a look upward, before posting?
+         <img alt=":)" class="wp-smiley" src="../../../../wp-includes/images/smilies/icon_smile.gif"/>
+         <br/>
+         I’ll try that.
+        </p>
+       </li>
+       <li id="comment-2337">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         <a href="http://eclipseme.org/" rel="external nofollow">
+          Craig Setera
+         </a>
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2337" title="">
+          November 5th, 2008 at 7:35 pm
+         </a>
+        </small>
+        <p>
+         You may want to try the getting started screen cast…
+         <a href="http://live.eclipse.org/node/614" rel="nofollow">
+          http://live.eclipse.org/node/614
+         </a>
+        </p>
+       </li>
+       <li class="alt" id="comment-2341">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         Julio Santa Cruz
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2341" title="">
+          November 10th, 2008 at 9:36 am
+         </a>
+        </small>
+        <p>
+         I’ve installed MTJ successfully but I can’t import devices from WTK 2.2 . Into the “Device Management” window, I click Import… then select the root of the WTK directory, then it starts searching through the files and finishes, but it adds no devices. My setup:
+         <br/>
+         Eclipse 3.3.2
+         <br/>
+         MTJ 0.9
+         <br/>
+         WTK 2.2
+         <br/>
+         Any help will be much appreciated!
+        </p>
+       </li>
+       <li id="comment-2356">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         <a href="http://eclipseme.org/" rel="external nofollow">
+          Craig Setera
+         </a>
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2356" title="">
+          November 22nd, 2008 at 2:39 pm
+         </a>
+        </small>
+        <p>
+         Julio,
+        </p>
+        <p>
+         Please join the MTJ user’s newsgroup and ask your question in there.  It is likely this is a configuration problem, but you can get more help there.
+        </p>
+        <p>
+         Thanks,
+         <br/>
+         Craig
+        </p>
+       </li>
+       <li class="alt" id="comment-2358">
+        <img alt="" class="avatar avatar-32 avatar-default" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32" width="32"/>
+        <cite>
+         <a href="../../../11/23/eclipseme-mtj-and-planeteclipse/index.html" rel="external nofollow">
+          EclipseME Home Page
+         </a>
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2358" title="">
+          November 23rd, 2008 at 12:54 pm
+         </a>
+        </small>
+        <p>
+         [...] Converting From EclipseME to Mobile Tools for Java [...]
+        </p>
+       </li>
+       <li id="comment-2393">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         Carlos Bernardo
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2393" title="">
+          January 4th, 2009 at 12:35 am
+         </a>
+        </small>
+        <p>
+         Hi! Craig
+         <br/>
+         Good job! I’ve followed your tutorial since the first step. My new imported Midlet launched with the default phone without any problem.
+        </p>
+        <p>
+         Thank you.
+        </p>
+       </li>
+       <li class="alt" id="comment-2399">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         Marcel
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2399" title="">
+          January 13th, 2009 at 6:11 pm
+         </a>
+        </small>
+        <p>
+         The import from the existing project failed because of my directory structure:
+         <br/>
+         The source is under
+         <br/>
+         /src/main/java
+         <br/>
+         and the MTJ import did assume it under
+        </p>
+        <p>
+         so the package names were wrong (src.main.java.org.xmlBlaster…).
+         <br/>
+         After changing in Properties-&gt;Java Build Path-&gt;Source
+         <br/>
+         to the correct ‘/src/main/java’ everything works fine.
+         <br/>
+         As some of my projects relate to others I had to manually add this reference again.
+        </p>
+       </li>
+       <li id="comment-2406">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         Heiko
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2406" title="">
+          February 25th, 2009 at 4:51 am
+         </a>
+        </small>
+        <p>
+         Converting of old (1.7.7 or earlier) EclipseME projects failed for me with this error message:
+        </p>
+        <p>
+         “Creation Problems: Path must include project and resource name: /MyProject”
+        </p>
+        <p>
+         Surprisingly, this happened for projects that I had started with an old version even though I edited them with 1.7.9.
+        </p>
+        <p>
+         The solution is simple. There is this line in .eclipseme:
+        </p>
+        <p>
+         Change it to
+        </p>
+        <p>
+         or whatever is the name of your JAD, then importing works. You must delete the semi-imported project, then retry importing.
+        </p>
+       </li>
+       <li class="alt" id="comment-2407">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         Heiko
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2407" title="">
+          February 25th, 2009 at 5:45 am
+         </a>
+        </small>
+        <p>
+         Argh, my previous comment was mutilated because I used xml tags which are discarded by the web site.
+        </p>
+        <p>
+         Here is what I wanted to write, I hope I can use html in the comment:
+        </p>
+        <p>
+         [...]
+         <br/>
+         The solution is simple. There is this line in .eclipseme:
+        </p>
+        <p>
+         &lt;eclipsemeMetadata jad=”" version=”1.7.3″&gt;
+        </p>
+        <p>
+         Change it to
+        </p>
+        <p>
+         &lt;eclipsemeMetadata jad=”MyProject.jad” version=”1.7.3″&gt;
+         <br/>
+         [...]
+        </p>
+       </li>
+       <li id="comment-2417">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         <a href="http://wagemobile.com.br/" rel="external nofollow">
+          Alan
+         </a>
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2417" title="">
+          April 15th, 2009 at 4:39 pm
+         </a>
+        </small>
+        <p>
+         Please do something easier to convert from EclipseME to MTJ projects… We have here almost 90 projects and converting all of them and assuring mistakes where not made is almost impossible. When you consider that thausands and thausands of people face the same problem, you might agree that the time your team would spend doing this “simple conversion tool” would be like a “socially conscious” effort when compared to the total ammount of effort all your faithful users arround the world will have to do to convert their projects from the earlier version. Unfortunately I cannot migrate to the new version now because of the difficulty to convert all of our projects and libs. Cheers and please keep on improving this great project.
+        </p>
+       </li>
+       <li class="alt" id="comment-2418">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         <a href="http://eclipseme.org/" rel="external nofollow">
+          Craig Setera
+         </a>
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2418" title="">
+          April 19th, 2009 at 3:59 pm
+         </a>
+        </small>
+        <p>
+         Alan,
+        </p>
+        <p>
+         Feel free to open a feature request with the MTJ project for such a feature.  It is a good idea.  The problem is really whether any one on the project has time to devote to such a feature.  In such cases, a patch to the project from you would definitely be appreciate.
+        </p>
+        <p>
+         Craig
+        </p>
+       </li>
+       <li id="comment-2421">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         Evgenia Martynova
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2421" title="">
+          July 9th, 2009 at 5:12 am
+         </a>
+        </small>
+        <p>
+         First of all thanks a lot for doing this. Does anybody have the problem with MTJ installation? I have got an error: No repository found. I have 3.4.2 version of Eclipse installed. I was trying two ways to install MTJ plugin: online and via archive without any luck. If anybody has a clue I will really apreciate.
+        </p>
+       </li>
+       <li class="alt" id="comment-2422">
+        <img alt="" class="avatar avatar-32" height="32" src="../../../../../../www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536c3b8.png?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" width="32"/>
+        <cite>
+         <a href="http://eclipseme.org/" rel="external nofollow">
+          Craig Setera
+         </a>
+        </cite>
+        Says:
+        <br/>
+        <small class="commentmetadata">
+         <a href="index.html#comment-2422" title="">
+          July 9th, 2009 at 5:43 am
+         </a>
+        </small>
+        <p>
+         I would suggest that you visit the MTJ user’s newsgroup at
+         <a href="http://www.eclipse.org/dsdp/mtj/news.php" rel="nofollow">
+          http://www.eclipse.org/dsdp/mtj/news.php
+         </a>
+         to get help with your installation issue.
+        </p>
+       </li>
+      </ol>
+      <!-- End Wordpress content -->
+      <br/>
+     </td>
+    </tr>
+    <tr height="31">
+     <td align="center" background="../../../../wp-content/themes/eclipseme/images/footer.png" colspan="2">
+      <div style="color: white; padding-top: 5px;">
+       Copyright
+©
+2005, http://www.eclipseme.org. All rights reserved.
+      </div>
+     </td>
+    </tr>
+   </tbody>
+  </table>
+ </body>
+ <!-- Mirrored from www.setera.org/eclipsemeorg/2008/10/19/converting-from-eclipseme-to-mobile-tools-for-java/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 09 Aug 2021 00:44:29 GMT -->
+</html>
