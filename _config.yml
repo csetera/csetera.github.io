@@ -26,7 +26,11 @@ projects:
     archived: false
     forks: true
     projects:
-    # - repo-name
+      - csetera/pixelli
+      - csetera/maestro
+      - csetera/match-maker
+      - csetera/rockboxtagcache
+
 
 social_media:
   linkedin: craigsetera
@@ -116,4 +120,3 @@ topics:
     web_url: https://github.com/topics/webapp
     image_url: /assets/images/web-tech-employed.jpg
 
-# Comment to force rebuild
