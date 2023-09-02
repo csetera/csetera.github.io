@@ -27,9 +27,9 @@ projects:
     forks: true
     projects:
       - csetera/pixelli
+      - csetera/TuneSyncMQ
+      - csetera/todo-full-stack
       - csetera/maestro
-      - csetera/match-maker
-      - csetera/rockboxtagcache
 
 
 social_media:
