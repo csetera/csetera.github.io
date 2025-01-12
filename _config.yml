@@ -52,8 +52,8 @@ social_media:
 
 historical:
   - name: Compute Magazine Article (1984)
-    web_url: https://archive.org/details/1984-02-compute-magazine/page/n63/mode/2up
-    image_url: /assets/images/compute.png
+    web_url: /assets/compute-circus/
+    image_url: /assets/compute-circus/cover.png
 
   - name: setera.org (Archive)
     web_url: /assets/archives/www.setera.org/
@@ -66,7 +66,7 @@ historical:
 topics:
   - name: 3D Printing
     web_url: https://en.wikipedia.org/wiki/3D_printing
-    image_url: https://cdn.shopify.com/s/files/1/0046/3781/8929/products/ender-3-pro_1_960x.jpg?v=1625023890
+    image_url: /assets/images/noun-3d-printing-6964654.png
     
   - name: Arduino
     web_url: https://github.com/topics/arduino
